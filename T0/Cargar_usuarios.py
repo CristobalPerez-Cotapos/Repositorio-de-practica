@@ -37,4 +37,3 @@ def cargar_contactos(path):
     return lista_contactos                        # facilitar la simetría
 
 
-print(cargar_contactos("contactos.csv"))
