@@ -1,4 +1,5 @@
-from Cargar_usuarios import cargar_usuarios, cargar_contactos
+from Cargar_usuarios import (cargar_usuarios, cargar_contactos,
+                             cargar_grupos)
 
 
 def relacionar_contactos():
@@ -6,6 +7,13 @@ def relacionar_contactos():
         for j in cargar_contactos("contactos.csv"):
             if str(i) == j[0]:
                 i.agregar_contacto(j[1])                   # todos los contactos está relacionados
+
+
+def relacionar_grupos():
+    for i in cargar_usuarios("usuarios.csv"):
+        for j in cargar_grupos("grupos.csv"):
+            if str(i) == j[1]:
+                i.agregar_grupo(j[0])
 
 
 def diccionarios(tipo):                                 # tipo ¿regular o grupo?

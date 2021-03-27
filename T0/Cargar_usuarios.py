@@ -11,7 +11,11 @@ class Usuario:                                # Creamos la Clase usuario para ma
 
     def agregar_contacto(self, contacto):    # Los contactos serán llaves para un diccionario de chats
         self.contactos.append(contacto)      # los chats serán namedtuples
-        pass
+
+    def agregar_grupo(self,grupo):
+        self.grupos.append(grupo)
+
+
 
 
 def cargar_usuarios(path):
@@ -36,4 +40,11 @@ def cargar_contactos(path):
         lista_contactos.append([i[1], i[0]])      # duplicamos los elementos en orden inverso, para
     return lista_contactos                        # facilitar la simetría
 
+def cargar_grupos(path):
+    archivo = open(path, "r")
+    personas_por_grupo = archivo.readlines()
+    for i in range(len(personas_por_grupo)):
+        personas_por_grupo[i] = personas_por_grupo[i].strip("\n")
+        personas_por_grupo[i] = personas_por_grupo[i].split(",")
+    return personas_por_grupo
 

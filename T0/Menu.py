@@ -1,4 +1,7 @@
-from Cargar_usuarios import cargar_usuarios, cargar_contactos
-from Relacionar_contactos import relacionar_contactos, diccionarios
+from Cargar_usuarios import cargar_usuarios, cargar_contactos, cargar_grupos
+from Relacionar_contactos import relacionar_contactos, relacionar_grupos, diccionarios
 
-print(diccionarios("grupo"))
+relacionar_contactos()
+relacionar_grupos()
+
+while 
