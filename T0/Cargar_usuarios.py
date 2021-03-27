@@ -21,6 +21,7 @@ class Usuario:                                # Creamos la Clase usuario para ma
 def cargar_usuarios(path):
     archivo = open(path, "r")
     usuarios = archivo.readlines()
+    archivo.close()
     lista_usuarios = []
     for i in usuarios:
         i = i.strip("\n")
@@ -31,6 +32,7 @@ def cargar_usuarios(path):
 def cargar_contactos(path):
     archivo = open(path, "r")
     contactos = archivo.readlines()
+    archivo.close()
     lista_contactos = []
     contactos.pop(0)
     for i in contactos:
@@ -43,6 +45,7 @@ def cargar_contactos(path):
 def cargar_grupos(path):
     archivo = open(path, "r")
     personas_por_grupo = archivo.readlines()
+    archivo.close()
     for i in range(len(personas_por_grupo)):
         personas_por_grupo[i] = personas_por_grupo[i].strip("\n")
         personas_por_grupo[i] = personas_por_grupo[i].split(",")

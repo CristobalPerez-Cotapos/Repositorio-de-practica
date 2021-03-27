@@ -19,6 +19,7 @@ def relacionar_grupos():
 def diccionarios(tipo):                                 # tipo ¿regular o grupo?
     archivo_mensajes = open("mensajes.csv")
     lineas_archivo_mensajes = archivo_mensajes.readlines()
+    archivo_mensajes.close()
     for i in range(len(lineas_archivo_mensajes)):
         lineas_archivo_mensajes[i] = lineas_archivo_mensajes[i].strip(",")
         lista_mensaje = lineas_archivo_mensajes[i].split(",")
