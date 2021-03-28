@@ -11,6 +11,7 @@ def relacionar_contactos(usuario):
             usuario = i
     return usuario
 
+
 def relacionar_grupos(usuario):
     for i in cargar_usuarios("usuarios.csv"):
         if str(i) == usuario:
@@ -21,7 +22,7 @@ def relacionar_grupos(usuario):
     return usuario
 
 
-def diccionarios_de_mensajes(tipo):                      ## FALLA, DEBES DUPLICAR LOS DICCIONARIOS PARA CADA LLAVE           # tipo ¿regular o grupo?
+def diccionarios_de_mensajes(tipo):            # tipo ¿regular o grupo?
     archivo_mensajes = open("mensajes.csv")
     lineas_archivo_mensajes = archivo_mensajes.readlines()
     archivo_mensajes.close()
@@ -43,9 +44,8 @@ def diccionarios_de_mensajes(tipo):                      ## FALLA, DEBES DUPLICA
             dic_mensajes_regulares[tupla_llave_2] = [""]
     lista_contactos = cargar_contactos("contactos.csv")
     for i in lista_contactos:
-        dic_mensajes_regulares[(i[1],i[0])] = [["Inicio del chat","Mensaje del sistema",""]]
-        dic_mensajes_regulares[(i[0], i[1])] = [["Inicio del chat","Mensaje del sistema",""]]
-
+        dic_mensajes_regulares[(i[1], i[0])] = [["Inicio del chat", "Mensaje del sistema", ""]]
+        dic_mensajes_regulares[(i[0], i[1])] = [["Inicio del chat", "Mensaje del sistema", ""]]
 
     for i in lineas_archivo_mensajes:                   # ahora rellenamos esas entradas
         mensaje = ""
@@ -60,7 +60,7 @@ def diccionarios_de_mensajes(tipo):                      ## FALLA, DEBES DUPLICA
             tupla_mensaje_grupo = (i[1], i[3], mensaje)           # contenido -> (emisor,hora,mensaje)
             dic_mensajes_grupo[i[2]].append(tupla_mensaje_grupo)
         else:
-            tupla_mensaje_regular = (i[1],i[3], mensaje)
+            tupla_mensaje_regular = (i[1], i[3], mensaje)
             dic_mensajes_regulares[i[2], i[1]].append(tupla_mensaje_regular)
             dic_mensajes_regulares[i[1], i[2]].append(tupla_mensaje_regular)    # contenido -> (hora, mensaje)
     if tipo == "grupo":

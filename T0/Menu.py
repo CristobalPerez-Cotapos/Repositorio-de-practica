@@ -1,11 +1,10 @@
-from Cargar_usuarios import (cargar_usuarios,
-                             cargar_contactos, cargar_grupos)
 from Relacionar_contactos import (relacionar_contactos,
                                   relacionar_grupos, diccionarios_de_mensajes)
-from Opciones_inicio import (agregar_usuario,detectar_usuario,
+from Opciones_inicio import (agregar_usuario, detectar_usuario,
                              eniviar_mensaje, agregar_contacto,
                              crear_grupo, abandonar_grupo)
 from datetime import datetime
+from parametros import VOLVER_FRASE, ABANDONAR_FRASE
 
 salir = False
 while not salir:
@@ -58,7 +57,7 @@ while not salir:
                               "[2] Añadir contacto \n"
                               "[0] Volver")
                         opcion_elegida_menu_contactos = input()
-                        if opcion_elegida_menu_contactos == "1":                  #menu ver contactos COMPLETAR
+                        if opcion_elegida_menu_contactos == "1":                  # menu ver contactos COMPLETAR
                             print(f"Estos son tus contactos, {nombre_usuario}:")
                             for i in usuario.contactos:
                                 print(i)
@@ -67,31 +66,26 @@ while not salir:
                                   "para regresar al menu de contactos")
                             opcion_elegida_menu_ver_contactos = input()
                             if opcion_elegida_menu_ver_contactos in usuario.contactos:
-                                chat = diccionarios_de_mensajes("regular")[str(usuario),
-                                                                         opcion_elegida_menu_ver_contactos]
+                                chat = diccionarios_de_mensajes("regular")[
+                                    str(usuario), opcion_elegida_menu_ver_contactos]
                                 volver_frase = False
                                 while not volver_frase:
                                     for i in chat:
                                         print(f"{i[1]},{i[0]} :\n {i[2]}")
                                     print("Escribe un mensaje o ingresa "
-                                          "VOLVER_FRASE para volver al menu "
+                                          "VOLVER para volver al menu "
                                           "de contactos")
                                     eleccion_escribir = input()
-                                    if eleccion_escribir == "VOLVER_FRASE":
+                                    if eleccion_escribir == VOLVER_FRASE:
                                         volver_frase = True
                                     else:
                                         now = datetime.now()
                                         fecha = now.strftime("%Y/%m/%d %H:%M:%S")
-                                        eniviar_mensaje("regular", str(usuario),eleccion_escribir,
-                                                                opcion_elegida_menu_ver_contactos,
-                                                                fecha)
+                                        eniviar_mensaje("regular", str(usuario), eleccion_escribir,
+                                                        opcion_elegida_menu_ver_contactos,
+                                                        fecha)
                                         chat = diccionarios_de_mensajes("regular")[str(usuario),
-                                                                                       opcion_elegida_menu_ver_contactos]
-
-
-
-                                        ## implementar envio de mensajes
-
+                                                                                   opcion_elegida_menu_ver_contactos]
 
                             elif opcion_elegida_menu_ver_contactos == "0":
                                 print("volviendo al menu de contactos, presiona enter")
@@ -120,7 +114,6 @@ while not salir:
                                   "de contactos")
                             input()
 
-
                 elif opcion_elegida_chats == "2":                   # Aquí empieza el menu de grupos
                     volver_grupos = False
                     while not volver_grupos:
@@ -138,7 +131,7 @@ while not salir:
                             print("Escribe el nombre del grupo que deseas ver o "
                                   "escribe VOLVER para regresar al menu de grupos")
                             opcion_ver_grupos = input()
-                            if opcion_ver_grupos == "VOLVER":
+                            if opcion_ver_grupos == VOLVER_FRASE:
                                 pass
                             elif opcion_ver_grupos in usuario.grupos:
                                 volver_mensaje_grupo = False
@@ -152,8 +145,8 @@ while not salir:
                                     mensaje_grupo = input()
                                     if mensaje_grupo == "VOLVER":
                                         volver_mensaje_grupo = True
-                                    elif mensaje_grupo == "ABANDONAR":
-                                        abandonar_grupo(opcion_ver_grupos,str(usuario))
+                                    elif mensaje_grupo == ABANDONAR_FRASE:
+                                        abandonar_grupo(opcion_ver_grupos, str(usuario))
                                         print(f"El grupo {opcion_ver_grupos} ha sido abandonado, "
                                               f"presiona enter para volver al menu de grupos")
                                         input()
@@ -161,7 +154,7 @@ while not salir:
                                     else:
                                         now = datetime.now()
                                         fecha = now.strftime("%Y/%m/%d %H:%M:%S")
-                                        eniviar_mensaje("grupo",str(usuario),mensaje_grupo,opcion_ver_grupos,
+                                        eniviar_mensaje("grupo", str(usuario), mensaje_grupo, opcion_ver_grupos,
                                                         fecha)
                                         pass
                             else:
@@ -181,8 +174,8 @@ while not salir:
                                 usuario_a_agregar = input()
                                 opcion_crear_grupo_1 = usuario_a_agregar
                                 if detectar_usuario(usuario_a_agregar):
-                                    crear_grupo(nombre_grupo_creado,usuario_a_agregar)
-                                elif usuario_a_agregar == "VOLVER":
+                                    crear_grupo(nombre_grupo_creado, usuario_a_agregar)
+                                elif usuario_a_agregar == VOLVER_FRASE:
                                     pass
                                 else:
                                     print("este usuario no existe, presiona enter "
