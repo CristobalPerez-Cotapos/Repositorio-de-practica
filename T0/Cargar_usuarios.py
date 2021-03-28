@@ -2,7 +2,7 @@
 class Usuario:                                # Creamos la Clase usuario para manejar el programa
     def __init__(self, nombre):
         self.nombre = nombre
-        self.contactos = []
+        self.contactos = set()
         self.grupos = []
 
     def __str__(self):
@@ -10,7 +10,7 @@ class Usuario:                                # Creamos la Clase usuario para ma
         pass
 
     def agregar_contacto(self, contacto):    # Los contactos serán llaves para un diccionario de chats
-        self.contactos.append(contacto)      # los chats serán namedtuples
+        self.contactos.add(contacto)      # los chats serán namedtuples
 
     def agregar_grupo(self,grupo):
         self.grupos.append(grupo)

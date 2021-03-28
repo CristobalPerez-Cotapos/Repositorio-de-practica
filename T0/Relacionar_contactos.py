@@ -2,21 +2,26 @@ from Cargar_usuarios import (cargar_usuarios, cargar_contactos,
                              cargar_grupos)
 
 
-def relacionar_contactos():
+def relacionar_contactos(usuario):
     for i in cargar_usuarios("usuarios.csv"):
         for j in cargar_contactos("contactos.csv"):
             if str(i) == j[0]:
                 i.agregar_contacto(j[1])                   # todos los contactos está relacionados
+        if str(i) == usuario:
+            usuario = i
+    return usuario
 
-
-def relacionar_grupos():
+def relacionar_grupos(usuario):
     for i in cargar_usuarios("usuarios.csv"):
+        if str(i) == usuario:
+            usuario = i
         for j in cargar_grupos("grupos.csv"):
             if str(i) == j[1]:
                 i.agregar_grupo(j[0])
+    return usuario
 
 
-def diccionarios(tipo):                                 # tipo ¿regular o grupo?
+def diccionarios_de_mensajes(tipo):                      ## FALLA, DEBES DUPLICAR LOS DICCIONARIOS PARA CADA LLAVE           # tipo ¿regular o grupo?
     archivo_mensajes = open("mensajes.csv")
     lineas_archivo_mensajes = archivo_mensajes.readlines()
     archivo_mensajes.close()
@@ -25,8 +30,8 @@ def diccionarios(tipo):                                 # tipo ¿regular o grupo
         lista_mensaje = lineas_archivo_mensajes[i].split(",")
         lineas_archivo_mensajes[i] = lista_mensaje                    # lineas_archivo_mensajes ahora es una matriz
 
-    dic_mensajes_regulares = {}       # key = str(grupo)
-    dic_mensajes_grupo = {}           # key {usuario1,usuario2}
+    dic_mensajes_regulares = {}       # key (usuario1,usuario2)
+    dic_mensajes_grupo = {}           # key str(grupo)
 
     for i in lineas_archivo_mensajes:                   # creamos todas las entradas en los diccionarios
         if i[0] == "grupo":
@@ -34,6 +39,8 @@ def diccionarios(tipo):                                 # tipo ¿regular o grupo
         else:
             tupla_llave = (i[1], i[2])
             dic_mensajes_regulares[tupla_llave] = []
+            tupla_llave_2 = (i[2], i[1])
+            dic_mensajes_regulares[tupla_llave_2] = []
 
     for i in lineas_archivo_mensajes:                   # ahora rellenamos esas entradas
         mensaje = ""
@@ -48,7 +55,8 @@ def diccionarios(tipo):                                 # tipo ¿regular o grupo
             tupla_mensaje_grupo = (i[1], i[3], mensaje)           # contenido -> (emisor,hora,mensaje)
             dic_mensajes_grupo[i[2]].append(tupla_mensaje_grupo)
         else:
-            tupla_mensaje_regular = (i[3], mensaje)
+            tupla_mensaje_regular = (i[1],i[3], mensaje)
+            dic_mensajes_regulares[i[2], i[1]].append(tupla_mensaje_regular)
             dic_mensajes_regulares[i[1], i[2]].append(tupla_mensaje_regular)    # contenido -> (hora, mensaje)
     if tipo == "grupo":
         return dic_mensajes_grupo

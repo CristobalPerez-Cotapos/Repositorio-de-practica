@@ -19,3 +19,5 @@ def detectar_usuario(nombre):
         if str(i) == nombre:
             return True
     return False
+
+
