@@ -20,12 +20,12 @@ def detectar_usuario(nombre):
             return True
     return False
 
-def eniviar_mensaje_regular(emisor, mensaje, receptor ,hora):
+def eniviar_mensaje(tipo, emisor, mensaje, receptor ,hora):
     mensajes = open("mensajes.csv", "r")
     lista_mensajes = mensajes.readlines()
     mensajes.close()
     lista_mensajes[-1] = lista_mensajes[-1] + "\n"
-    texto = f"regular,{emisor},{receptor},{hora},{mensaje}"
+    texto = f"{tipo},{emisor},{receptor},{hora},{mensaje}"
     lista_mensajes.append(texto)
     texto_final = ""
     for i in lista_mensajes:
@@ -61,4 +61,17 @@ def crear_grupo(grupo,usuario):
     grupos_nuevo = open("grupos.csv", "w")
     grupos_nuevo.write(texto_final)
     grupos_nuevo.close()
-    pass
+
+def abandonar_grupo(grupo,usuario):
+    grupos = open("grupos.csv", "r")
+    lista_grupos = grupos.readlines()
+    grupos.close()
+    for i in range(len(lista_grupos)):
+        if grupo in lista_grupos[i] and usuario in lista_grupos[i]:
+            lista_grupos.pop(i)
+    texto_final = ""
+    for i in lista_grupos:
+        texto_final = texto_final + i
+    grupos_nuevo = open("grupos.csv", "w")
+    grupos_nuevo.write(texto_final)
+    grupos_nuevo.close()

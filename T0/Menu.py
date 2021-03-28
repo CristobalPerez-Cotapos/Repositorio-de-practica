@@ -3,9 +3,9 @@ from Cargar_usuarios import (cargar_usuarios,
 from Relacionar_contactos import (relacionar_contactos,
                                   relacionar_grupos, diccionarios_de_mensajes)
 from Opciones_inicio import (agregar_usuario,detectar_usuario,
-                             eniviar_mensaje_regular, agregar_contacto,
-                             crear_grupo)
-
+                             eniviar_mensaje, agregar_contacto,
+                             crear_grupo, abandonar_grupo)
+from datetime import datetime
 
 salir = False
 while not salir:
@@ -80,13 +80,11 @@ while not salir:
                                     if eleccion_escribir == "VOLVER_FRASE":
                                         volver_frase = True
                                     else:
-                                        print("Por favor escriba la hora a la que"
-                                              " envía este mensaje, en el formato"
-                                              " año/mes/dia hora:minuto:segundo")
-                                        opcion_elegida_hora = input()
-                                        eniviar_mensaje_regular(str(usuario),eleccion_escribir,
+                                        now = datetime.now()
+                                        fecha = now.strftime("%Y/%m/%d %H:%M:%S")
+                                        eniviar_mensaje("regular", str(usuario),eleccion_escribir,
                                                                 opcion_elegida_menu_ver_contactos,
-                                                                opcion_elegida_hora)
+                                                                fecha)
                                         chat = diccionarios_de_mensajes("regular")[str(usuario),
                                                                                        opcion_elegida_menu_ver_contactos]
 
@@ -137,8 +135,38 @@ while not salir:
                             print(f"Estos son tus grupos, {nombre_usuario}")
                             for i in usuario.grupos:
                                 print(i)
-                            input()
-                            #implementar
+                            print("Escribe el nombre del grupo que deseas ver o "
+                                  "escribe VOLVER para regresar al menu de grupos")
+                            opcion_ver_grupos = input()
+                            if opcion_ver_grupos == "VOLVER":
+                                pass
+                            elif opcion_ver_grupos in usuario.grupos:
+                                volver_mensaje_grupo = False
+                                while not volver_mensaje_grupo:
+                                    for i in diccionarios_de_mensajes("grupo")[opcion_ver_grupos]:
+                                        if len(i) > 1:
+                                            print(f"{i[1]},{i[0]} :\n {i[2]}")
+                                    print("\n Ingresa un mensaje, o escribe VOLVER para regresar "
+                                          "al menu de grupos. También puedes escribir ABANDONAR para "
+                                          "abandonar el grupo")
+                                    mensaje_grupo = input()
+                                    if mensaje_grupo == "VOLVER":
+                                        volver_mensaje_grupo = True
+                                    elif mensaje_grupo == "ABANDONAR":
+                                        abandonar_grupo(opcion_ver_grupos,str(usuario))
+                                        print(f"El grupo {opcion_ver_grupos} ha sido abandonado, "
+                                              f"presiona enter para volver al menu de grupos")
+                                        input()
+                                        volver_mensaje_grupo = True
+                                    else:
+                                        now = datetime.now()
+                                        fecha = now.strftime("%Y/%m/%d %H:%M:%S")
+                                        eniviar_mensaje("grupo",str(usuario),mensaje_grupo,opcion_ver_grupos,
+                                                        fecha)
+                                        pass
+                            else:
+                                print("Grupo no valido, presiona enter para volver "
+                                      "al menu de grupos")
                         elif opcion_menu_grupos == "2":
                             print("Escribe el nombre del grupo que deseas"
                                   " crear, o ingresa VOLVER para volver al menu"
