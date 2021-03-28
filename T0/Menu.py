@@ -1,6 +1,9 @@
-from Cargar_usuarios import cargar_usuarios, cargar_contactos, cargar_grupos
-from Relacionar_contactos import relacionar_contactos, relacionar_grupos, diccionarios_de_mensajes
-from Opciones_inicio import agregar_usuario, detectar_usuario
+from Cargar_usuarios import (cargar_usuarios,
+                             cargar_contactos, cargar_grupos)
+from Relacionar_contactos import (relacionar_contactos,
+                                  relacionar_grupos, diccionarios_de_mensajes)
+from Opciones_inicio import (agregar_usuario,detectar_usuario,
+                             eniviar_mensaje_regular, agregar_contacto)
 
 
 salir = False
@@ -58,8 +61,8 @@ while not salir:
                             print(f"Estos son tus contactos, {nombre_usuario}:")
                             for i in usuario.contactos:
                                 print(i)
-                            print("Ingresa el nombre del conacto con el "
-                                  "que quieras hablar o presiona 0"
+                            print("Ingresa el nombre del contacto con el "
+                                  "que quieras hablar o presiona 0 "
                                   "para regresar al menu de contactos")
                             opcion_elegida_menu_ver_contactos = input()
                             if opcion_elegida_menu_ver_contactos in usuario.contactos:
@@ -69,14 +72,23 @@ while not salir:
                                 while not volver_frase:
                                     for i in chat:
                                         print(f"{i[1]},{i[0]} :\n {i[2]}")
-                                        print("Escribe un mensaje o ingresa"
-                                              "VOLVER_FRASE para volver al menu "
-                                              "de contactos")
-                                        eleccion_escribir = input()
-                                        if eleccion_escribir == "VOLVER_FRASE":
-                                            volver_frase = True
-                                        else:
-                                            pass ## AÑANDIR MENSAJE AL CHAT
+                                    print("Escribe un mensaje o ingresa "
+                                          "VOLVER_FRASE para volver al menu "
+                                          "de contactos")
+                                    eleccion_escribir = input()
+                                    if eleccion_escribir == "VOLVER_FRASE":
+                                        volver_frase = True
+                                    else:
+                                        print("Por favor escriba la hora a la que"
+                                              "envia este mensaje, en el formato"
+                                              "año/mes/dia hora:minuto:segundo")
+                                        opcion_elegida_hora = input()
+                                        eniviar_mensaje_regular(str(usuario),eleccion_escribir,
+                                                                opcion_elegida_menu_ver_contactos,
+                                                                opcion_elegida_hora)
+                                        chat = diccionarios_de_mensajes("regular")[str(usuario),
+                                                                                       opcion_elegida_menu_ver_contactos]
+
 
 
                                         ## implementar envio de mensajes
@@ -95,7 +107,8 @@ while not salir:
                                   "que deseas agregar")
                             contacto_a_agregar = input()
                             if detectar_usuario(contacto_a_agregar):
-                                usuario.agregar_contacto(contacto_a_agregar)
+                                agregar_contacto(str(usuario), contacto_a_agregar)
+                                usuario = relacionar_contactos(nombre_usuario)
                             else:
                                 print("Este usuario no existe, presiona enter"
                                       "para volver al menu de contactos")
