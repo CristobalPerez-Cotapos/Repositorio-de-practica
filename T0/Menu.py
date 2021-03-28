@@ -62,7 +62,7 @@ while not salir:
                             for i in usuario.contactos:
                                 print(i)
                             print("Ingresa el nombre del contacto con el "
-                                  "que quieras hablar o presiona 0 "
+                                  "que quieras hablar o escribe VOLVER "
                                   "para regresar al menu de contactos")
                             opcion_elegida_menu_ver_contactos = input()
                             if opcion_elegida_menu_ver_contactos in usuario.contactos:
@@ -87,7 +87,7 @@ while not salir:
                                         chat = diccionarios_de_mensajes("regular")[str(usuario),
                                                                                    opcion_elegida_menu_ver_contactos]
 
-                            elif opcion_elegida_menu_ver_contactos == "0":
+                            elif opcion_elegida_menu_ver_contactos == VOLVER_FRASE:
                                 print("volviendo al menu de contactos, presiona enter")
                                 input()
                             else:
@@ -104,7 +104,7 @@ while not salir:
                                 usuario = relacionar_contactos(nombre_usuario)
                             else:
                                 print("Este usuario no existe, presiona enter"
-                                      "para volver al menu de contactos")
+                                      " para volver al menu de contactos")
                                 input()
                         elif opcion_elegida_menu_contactos == "0":
                             salir_menu_contactos = True
