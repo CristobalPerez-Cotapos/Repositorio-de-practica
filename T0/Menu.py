@@ -3,7 +3,8 @@ from Cargar_usuarios import (cargar_usuarios,
 from Relacionar_contactos import (relacionar_contactos,
                                   relacionar_grupos, diccionarios_de_mensajes)
 from Opciones_inicio import (agregar_usuario,detectar_usuario,
-                             eniviar_mensaje_regular, agregar_contacto)
+                             eniviar_mensaje_regular, agregar_contacto,
+                             crear_grupo)
 
 
 salir = False
@@ -42,7 +43,7 @@ while not salir:
                       "\n\nSelecciona una opción: \n\n"
                       "[1] Ver contactos \n"
                       "[2] Ver grupos \n"
-                      "[3] Volver")
+                      "[0] Volver")
                 opcion_elegida_chats = input()
                 if opcion_elegida_chats == "0":
                     volver = True
@@ -55,7 +56,7 @@ while not salir:
                               "\n\nSelecciona una opción: \n\n"
                               "[1] Ver contactos \n"
                               "[2] Añadir contacto \n"
-                              "[3] Volver")
+                              "[0] Volver")
                         opcion_elegida_menu_contactos = input()
                         if opcion_elegida_menu_contactos == "1":                  #menu ver contactos COMPLETAR
                             print(f"Estos son tus contactos, {nombre_usuario}:")
@@ -80,8 +81,8 @@ while not salir:
                                         volver_frase = True
                                     else:
                                         print("Por favor escriba la hora a la que"
-                                              "envia este mensaje, en el formato"
-                                              "año/mes/dia hora:minuto:segundo")
+                                              " envía este mensaje, en el formato"
+                                              " año/mes/dia hora:minuto:segundo")
                                         opcion_elegida_hora = input()
                                         eniviar_mensaje_regular(str(usuario),eleccion_escribir,
                                                                 opcion_elegida_menu_ver_contactos,
@@ -99,12 +100,12 @@ while not salir:
                                 input()
                             else:
                                 print("Opcion no valida, presiona enter"
-                                      "para volver al menu de contactos")
+                                      " para volver al menu de contactos")
                                 input()
 
                         elif opcion_elegida_menu_contactos == "2":
                             print("Escribe el nombre del contacto"
-                                  "que deseas agregar")
+                                  " que deseas agregar")
                             contacto_a_agregar = input()
                             if detectar_usuario(contacto_a_agregar):
                                 agregar_contacto(str(usuario), contacto_a_agregar)
@@ -117,21 +118,56 @@ while not salir:
                             salir_menu_contactos = True
                         else:
                             print("Opción no valida, presiona"
-                                  "enter para volver al menu "
+                                  " enter para volver al menu "
                                   "de contactos")
                             input()
 
 
-
-
-
                 elif opcion_elegida_chats == "2":                   # Aquí empieza el menu de grupos
-                    usuario = relacionar_grupos(nombre_usuario)
-                    print(f"Estos son tus grupos, {nombre_usuario}")
-                    for i in usuario.grupos:
-                        print(i)
-                    input()
-
+                    volver_grupos = False
+                    while not volver_grupos:
+                        print("***** Menu de grupos *****"
+                              "\n\nSelecciona una opción\n\n"
+                              "[1] Ver grupos\n"
+                              "[2] Crear grupo\n"
+                              "[0] Volver\n")
+                        opcion_menu_grupos = input()
+                        if opcion_menu_grupos == "1":
+                            usuario = relacionar_grupos(nombre_usuario)
+                            print(f"Estos son tus grupos, {nombre_usuario}")
+                            for i in usuario.grupos:
+                                print(i)
+                            input()
+                            #implementar
+                        elif opcion_menu_grupos == "2":
+                            print("Escribe el nombre del grupo que deseas"
+                                  " crear, o ingresa VOLVER para volver al menu"
+                                  "de grupos")
+                            opcion_crear_grupo_1 = input()
+                            nombre_grupo_creado = opcion_crear_grupo_1
+                            while opcion_crear_grupo_1 != "VOLVER":
+                                print(f"Escribe el nombre de un usuario "
+                                      f"que se unirá al grupo {nombre_grupo_creado}, o "
+                                      f"escribe VOLVER para volver al menu "
+                                      f"de grupos")
+                                usuario_a_agregar = input()
+                                opcion_crear_grupo_1 = usuario_a_agregar
+                                if detectar_usuario(usuario_a_agregar):
+                                    crear_grupo(nombre_grupo_creado,usuario_a_agregar)
+                                elif usuario_a_agregar == "VOLVER":
+                                    pass
+                                else:
+                                    print("este usuario no existe, presiona enter "
+                                          "para intentarlo de nuevo")
+                                    input()
+                            # implementar
+                            pass
+                        elif opcion_menu_grupos == "0":
+                            volver_grupos = True
+                        else:
+                            print("Opción elegida no valida,presiona"
+                                  " enter para volver al menu de grupos")
+                            input()
 
                 else:
                     print("Opción no valida, intente de nuevo")

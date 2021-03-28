@@ -39,7 +39,7 @@ def agregar_contacto(usuario_1,usuario_2):
     lista_contactos = contactos.readlines()
     contactos.close()
     lista_contactos[-1] = lista_contactos[-1] + "\n"
-    texto = f"{usuario_1,usuario_2}"
+    texto = usuario_1+","+usuario_2
     lista_contactos.append(texto)
     texto_final = ""
     for i in lista_contactos:
@@ -47,3 +47,18 @@ def agregar_contacto(usuario_1,usuario_2):
     contactos_nuevo = open("contactos.csv", "w")
     contactos_nuevo.write(texto_final)
     contactos_nuevo.close()
+
+def crear_grupo(grupo,usuario):
+    grupos = open("grupos.csv", "r")
+    lista_grupos = grupos.readlines()
+    grupos.close()
+    lista_grupos[-1] = lista_grupos[-1] + "\n"
+    texto = grupo+ "," + usuario
+    lista_grupos.append(texto)
+    texto_final = ""
+    for i in lista_grupos:
+        texto_final = texto_final + i
+    grupos_nuevo = open("grupos.csv", "w")
+    grupos_nuevo.write(texto_final)
+    grupos_nuevo.close()
+    pass

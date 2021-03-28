@@ -35,12 +35,17 @@ def diccionarios_de_mensajes(tipo):                      ## FALLA, DEBES DUPLICA
 
     for i in lineas_archivo_mensajes:                   # creamos todas las entradas en los diccionarios
         if i[0] == "grupo":
-            dic_mensajes_grupo[i[2]] = []
+            dic_mensajes_grupo[i[2]] = [""]
         else:
             tupla_llave = (i[1], i[2])
-            dic_mensajes_regulares[tupla_llave] = []
+            dic_mensajes_regulares[tupla_llave] = [""]
             tupla_llave_2 = (i[2], i[1])
-            dic_mensajes_regulares[tupla_llave_2] = []
+            dic_mensajes_regulares[tupla_llave_2] = [""]
+    lista_contactos = cargar_contactos("contactos.csv")
+    for i in lista_contactos:
+        dic_mensajes_regulares[(i[1],i[0])] = [["Inicio del chat","Mensaje del sistema",""]]
+        dic_mensajes_regulares[(i[0], i[1])] = [["Inicio del chat","Mensaje del sistema",""]]
+
 
     for i in lineas_archivo_mensajes:                   # ahora rellenamos esas entradas
         mensaje = ""
