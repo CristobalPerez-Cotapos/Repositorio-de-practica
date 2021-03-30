@@ -1,8 +1,8 @@
-from Relacionar_contactos import (relacionar_contactos,
-                                  relacionar_grupos, diccionarios_de_mensajes)
+from Relacionar_datos import (relacionar_contactos,
+                              relacionar_grupos, diccionarios_de_mensajes)
 from Opciones_inicio import (agregar_usuario, detectar_usuario,
                              eniviar_mensaje, agregar_contacto,
-                             crear_grupo, abandonar_grupo)
+                             crear_grupo, abandonar_grupo, condiciones_grupo, en_el_grupo)
 from datetime import datetime
 from parametros import VOLVER_FRASE, ABANDONAR_FRASE
 
@@ -20,12 +20,17 @@ while not salir:
         salir = True
     elif opcion_elegida == "1":
         print("Ingrese el nombre de usuario deseado, "
-              "el cual no debe contener comas")
+              "el cual no debe contener comas, y debe tener entre"
+              " 3 y 15 caracteres")
         nombre = input()
         if detectar_usuario(nombre):
             print(f"el usuario {nombre} ya existe,"
                   f"presione enter para volver al menu"
                   f" de inicio")
+            input()
+        elif "," in nombre or len(nombre) > 15 or len(nombre) < 3:
+            print("El nombre de usuario no cumple las características necesarias"
+                  " presiona enter para volver al menu de inicio")
             input()
         else:
             agregar_usuario(nombre)
@@ -48,7 +53,7 @@ while not salir:
                     volver = True
 
                 elif opcion_elegida_chats == "1":                   # Aquí empieza el menu de contactos
-                    usuario = relacionar_contactos(nombre_usuario)  # función de Relacionar_contactos.py
+                    usuario = relacionar_contactos(nombre_usuario)  # función de Relacionar_datos.py
                     salir_menu_contactos = False
                     while not salir_menu_contactos:
                         print("***** Menu de Contactos *****"
@@ -91,7 +96,7 @@ while not salir:
                                 print("volviendo al menu de contactos, presiona enter")
                                 input()
                             else:
-                                print("Opcion no valida, presiona enter"
+                                print("Opción no valida, presiona enter"
                                       " para volver al menu de contactos")
                                 input()
 
@@ -149,6 +154,11 @@ while not salir:
                                         abandonar_grupo(opcion_ver_grupos, str(usuario))
                                         print(f"El grupo {opcion_ver_grupos} ha sido abandonado, "
                                               f"presiona enter para volver al menu de grupos")
+                                        now = datetime.now()
+                                        fecha = now.strftime("%Y/%m/%d %H:%M:%S")
+                                        mensaje_de_salida = f"Mensaje del sistema: {str(usuario)} abandono el grupo"
+                                        eniviar_mensaje("grupo", str(usuario),
+                                                        mensaje_de_salida, opcion_ver_grupos, fecha)
                                         input()
                                         volver_mensaje_grupo = True
                                     else:
@@ -161,28 +171,44 @@ while not salir:
                                 print("Grupo no valido, presiona enter para volver "
                                       "al menu de grupos")
                         elif opcion_menu_grupos == "2":
+                            usuario = relacionar_grupos(nombre_usuario)
                             print("Escribe el nombre del grupo que deseas"
                                   " crear, o ingresa VOLVER para volver al menu"
-                                  "de grupos")
+                                  "de grupos. \n"
+                                  "El nombre del grupo debe ser nuevo y debe contener al menos 1 caracter,"
+                                  "y tu ingresarás al grupo automáticamente")
                             opcion_crear_grupo_1 = input()
                             nombre_grupo_creado = opcion_crear_grupo_1
-                            while opcion_crear_grupo_1 != "VOLVER":
-                                print(f"Escribe el nombre de un usuario "
-                                      f"que se unirá al grupo {nombre_grupo_creado}, o "
-                                      f"escribe VOLVER para volver al menu "
-                                      f"de grupos")
-                                usuario_a_agregar = input()
-                                opcion_crear_grupo_1 = usuario_a_agregar
-                                if detectar_usuario(usuario_a_agregar):
-                                    crear_grupo(nombre_grupo_creado, usuario_a_agregar)
-                                elif usuario_a_agregar == VOLVER_FRASE:
-                                    pass
-                                else:
-                                    print("este usuario no existe, presiona enter "
-                                          "para intentarlo de nuevo")
-                                    input()
-                            # implementar
-                            pass
+                            if not condiciones_grupo(nombre_grupo_creado):
+                                print("El nombre del grupo no es valido, presiona enter para"
+                                      " volver al menú de grupos")
+                                input()
+                            elif opcion_crear_grupo_1 != "VOLVER":
+                                while opcion_crear_grupo_1 != "VOLVER":
+                                    print(f"Escribe el nombre de un usuario "
+                                          f"que se unirá al grupo {nombre_grupo_creado}, o "
+                                          f"escribe VOLVER para volver al menu "
+                                          f"de grupos")
+                                    usuario_a_agregar = input()
+                                    opcion_crear_grupo_1 = usuario_a_agregar
+                                    if usuario_a_agregar == str(usuario):
+                                        print("No te puedes añadir 2 veces, presiona enter para volver")
+                                    elif detectar_usuario(usuario_a_agregar):
+                                        if condiciones_grupo(nombre_grupo_creado):
+                                            crear_grupo(nombre_grupo_creado, str(usuario))
+                                            print("El grupo ha sido creado contigo como miembro")
+                                        if not en_el_grupo(nombre_grupo_creado,usuario_a_agregar):
+                                            crear_grupo(nombre_grupo_creado, usuario_a_agregar)
+                                            print(f"usuario {usuario_a_agregar} agregado con éxito")
+                                        else:
+                                            print("Este usuario ya está en el grupo, intentalo de nuevo")
+                                    elif usuario_a_agregar == VOLVER_FRASE:
+                                        pass
+
+                                    else:
+                                        print("este usuario no existe, presiona enter "
+                                              "para intentarlo de nuevo")
+                                        input()
                         elif opcion_menu_grupos == "0":
                             volver_grupos = True
                         else:
