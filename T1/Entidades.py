@@ -28,6 +28,9 @@ class Barcos(ABC):
         self.ocurrencia_evento = False
         self.horas_en_canal = 0
 
+    def __str__(self):
+        return f"Este barco es el {self.nombre}, con tripulación {self.nombres_tripulacion}"
+
     def desplazarse(self):  # Falta bloquear el paso cuando encalla algo delante
         minimo = min(1, (self.carga_maxima - self.peso_mercancia-(0.3*len(self.nombre_pasajeros)))/self.carga_maxima)
         maximo = max(0.1, minimo)
@@ -164,7 +167,6 @@ class DCCocinero(Tripulacion):
             for i in objetos:
                 i.tiempo_expiracion = i.tiempo_expiracion * 2
         self.uso_habilidad = True
-
 
 
 class DCCarguero(Tripulacion):
