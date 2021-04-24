@@ -12,10 +12,10 @@ class Barcos(ABC):
     def __init__(self, nombre, tipo, costo_de_mantencion, velocidad_base, pasajeros, carga_maxima,
                  moneda_de_origen, tripulacion, carga):
         self.nombre = nombre
-        self.costo_de_mantencion = costo_de_mantencion
-        self.velocidad_base = velocidad_base
-        self.nombre_pasajeros = pasajeros                               # con los objetos pasajeros
-        self.carga_maxima = carga_maxima
+        self.costo_de_mantencion = int(costo_de_mantencion)
+        self.velocidad_base = int(velocidad_base)
+        self.pasajeros = int(pasajeros)                               # con los objetos pasajeros
+        self.carga_maxima = int(carga_maxima)
         self.moneda_de_origen = moneda_de_origen
         self.tipo = tipo
         self.nombres_tripulacion = tripulacion     # Son los nombres, pero va a haber una lista
@@ -32,7 +32,7 @@ class Barcos(ABC):
         return f"Este barco es el {self.nombre}, con tripulación {self.nombres_tripulacion}"
 
     def desplazarse(self):  # Falta bloquear el paso cuando encalla algo delante
-        minimo = min(1, (self.carga_maxima - self.peso_mercancia-(0.3*len(self.nombre_pasajeros)))/self.carga_maxima)
+        minimo = min(1, (self.carga_maxima - self.peso_mercancia-(0.3*len(self.pasajeros)))/self.carga_maxima)
         maximo = max(0.1, minimo)
         desplazmiento = maximo * self.velocidad_base
         self.avance += desplazmiento
@@ -121,8 +121,8 @@ class Mercancia:  # Completada
     def __init__(self, lote, tipo, tiempo_expiracion, peso):
         self.lote = lote
         self.tipo = tipo
-        self.tiempo_expiracion = tiempo_expiracion
-        self.peso = peso
+        self.tiempo_expiracion = int(tiempo_expiracion)
+        self.peso = int(peso)
         self.barco = None
 
     def expirar(self):            # solamente devuelve el monto que se debe cobrar
@@ -142,7 +142,7 @@ class Mercancia:  # Completada
 class Tripulacion(ABC):
     def __init__(self, nombre, experiencia):
         self.nombre = nombre
-        self.experiencia = experiencia
+        self.experiencia = int(experiencia)
         self.barco = None
         self.uso_habilidad = False
 
@@ -181,7 +181,7 @@ class Canal:
     def __init__(self, nombre, largo, dificultad):
         self.nombre = nombre
         self.dinero = DINERO_INICIAL
-        self.largo = largo
+        self.largo = int(largo)
         self.dificultad = dificultad
         self.barcos = []
 
