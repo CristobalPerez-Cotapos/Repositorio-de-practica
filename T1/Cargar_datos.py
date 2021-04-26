@@ -3,7 +3,7 @@ from Entidades import (Buque, Barco_carguero, Barco_de_pasajeros, DCCarguero, DC
 
 
 def cargar_barcos():
-    archivo = open("barcos.csv", "r")
+    archivo = open("barcos.csv", "r", encoding="utf-8")
     lineas = archivo.readlines()
     barcos = []
     for i in lineas:
@@ -24,15 +24,17 @@ def cargar_barcos():
         for j in cargar_tripulantes():
             if j.nombre in i.nombres_tripulacion:
                 i.tripulacion.append(j)
+                j.barco = i
     for i in barcos:
         for j in cargar_mercancia():
             if j.lote in i.codigos_carga:
                 i.carga.append(j)
+                j.barco = i
     return barcos
 
 
 def cargar_canales():
-    archivo = open("canales.csv", "r")
+    archivo = open("canales.csv", "r", encoding="utf-8")
     lineas = archivo.readlines()
     canales = []
     lineas.pop(0)
@@ -45,7 +47,7 @@ def cargar_canales():
 
 
 def cargar_mercancia():
-    archivo = open("mercancia.csv", "r")
+    archivo = open("mercancia.csv", "r", encoding="utf-8")
     lineas = archivo.readlines()
     cajas = []
     lineas.pop(0)
@@ -58,19 +60,19 @@ def cargar_mercancia():
 
 
 def cargar_tripulantes():
-    archivo = open("tripulantes.csv", "r")
+    archivo = open("tripulantes.csv", "r", encoding="utf-8")
     lineas = archivo.readlines()
     tripulantes = []
     lineas.pop(0)
     for i in lineas:
         i = i.strip("\n")
         i = i.split(",")
-        if i[1] == "DCCapitÃ¡n":    # Para arreglar el tema de las tildes está escrito así
-            persona = DCCapitan(i[0], i[2])
+        if i[1] == "DCCapitán":    # Para arreglar el tema de las tildes está escrito así
+            persona = DCCapitan(i[0], i[1], i[2])
         elif i[1] == "DCCocinero":
-            persona = DCCocinero(i[0], i[2])
+            persona = DCCocinero(i[0], i[1], i[2])
         elif i[1] == "DCCarguero":
-            persona = DCCarguero(i[0], i[2])
+            persona = DCCarguero(i[0], i[1], i[2])
         else:
             raise ValueError("El tipo de este tripulante no existe")
         tripulantes.append(persona)
