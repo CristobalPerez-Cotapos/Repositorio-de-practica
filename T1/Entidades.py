@@ -30,7 +30,6 @@ class Barcos(ABC):
         self.horas_en_canal = 0
         self.dias_averia = 0
 
-
     def desplazarse(self):  # Falta bloquear el paso cuando encalla algo delante
         if not self.encallado: 
             minimo = min(1, (self.carga_maxima - self.peso_mercancia-(0.3*self.pasajeros))/self.carga_maxima)
@@ -44,7 +43,6 @@ class Barcos(ABC):
     def usar_especialidades(self):
         for i in self.tripulacion:
             i.especialidad()
-
 
     @property
     def peso_mercancia(self):  # Completa
@@ -92,6 +90,7 @@ class Barco_de_pasajeros(Barcos):
         if self.prob_encallar > azar:
             print(f"El barco {self.nombre} ha encallado")
             self.encallado = True
+            self.canal.barcos_que_encallaron += 1
             return True
         return False
 
@@ -159,7 +158,8 @@ class Mercancia:  # Completada
                 multa = 0
             self.barco.canal.dinero -= multa
             self.barco.canal.dinero_gastado += multa
-            print(f"Se ha cobrado {multa} al canal {self.barco.canal} por la expiración de {self.tipo} en el {self.barco}")
+            print(f"Se ha cobrado {multa} al canal {self.barco.canal} por la expiración de {self.tipo} "
+                  f"en el {self.barco}")
         else:
             self.tiempo_expiracion -= 1
 
@@ -194,7 +194,7 @@ class DCCocinero(Tripulacion):
             for i in objetos:
                 i.tiempo_expiracion = i.tiempo_expiracion * 2
             print(f"El cocinero {self.nombre} del {self.barco.nombre} ha hecho que los alimentos del barco"
-                      f" duren más")
+                  f" duren más")
             self.uso_habilidad = True
 
 
@@ -205,6 +205,7 @@ class DCCarguero(Tripulacion):
             self.barco.carga_maxima += CARGA_EXTRA_CARGUERO
             print(f"El carguero {self.nombre} del {self.barco.nombre} ha aumentado la carga máxima el barco")
             self.uso_habilidad = True
+
 
 class Canal:
 
@@ -232,7 +233,7 @@ class Canal:
     @property
     def hay_encallado(self):
         for i in self.barcos:
-            if i.encallado == True:
+            if i.encallado:
                 return True
         return False
 
@@ -255,7 +256,6 @@ class Canal:
             return PONDERADOR_AVANZADO
         return PONDERADOR_PRINCIPIANTE
 
-
     def ingresar_barco(self, barco):    # esto solo se debe usar para un barco que no esté en el canal
         self.barcos.append(barco)
 
@@ -275,6 +275,8 @@ class Canal:
                     barcos_que_avanzan.append(i)
                 else:
                     i.dias_averia -= 1
+                    print(f"{i.nombre} sigue averiado, le faltan {i.dias_averia}" 
+                    f"horas para volver a avanzar")
             else:
                 if i.dias_averia != 0:
                     i.dias_averia -= 1
@@ -283,7 +285,6 @@ class Canal:
             if not i.encallar():
                 i.ejecutar_evento_especial()
                 i.desplazarse()
-
 
     def desencallar_barco(self, barco):
         self.dinero -= COSTO_DESENCALLAR

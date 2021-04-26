@@ -1,6 +1,7 @@
 from Cargar_datos import (cargar_barcos, cargar_canales)
 
 salir = False
+contador = 0
 while not salir:
     print("*** Menú de Inicio ***\n\n"
           "Selecciona una opción: \n"
@@ -67,14 +68,14 @@ while not salir:
                         input()
                 elif opcion_accion == "3":
                     if canal.hay_encallado:
-                        print("El canal esta bloqueado, no pueden ingresar nuevos barcos. Presiona enter para continuar")
+                        print("El canal esta bloqueado, no pueden ingresar nuevos barcos. \n"
+                              "Presiona enter para continuar")
                         input()
                     else:
                         eleccion_echa = False
                         while not eleccion_echa:
                             print("Los siguientes barcos esperan a entrar al canal, escribe el nombre \n"
                                   "de uno para hacerlo pasar, o escribe NINGUNO para que no ingrese ninguno")
-                            contador = 0
                             contador_2 = 0
                             nombres_barcos = []
                             contador_limite = False
@@ -112,19 +113,21 @@ while not salir:
                     for i in canal.barcos:
                         for j in i.carga:
                             j.expirar()
-                    for i in range(len(canal.barcos)):
-                        if canal.barcos[i].avance >= canal.largo:
-                            canal.barcos[i].avance = 0
+                    contador_3 = 0
+                    while contador_3 < len(canal.barcos):
+                        if canal.barcos[contador_3].avance >= canal.largo:
+                            canal.barcos[contador_3].avance = 0
                             canal.dinero += canal.cobro_de_uso
                             canal.dinero_recibido += canal.cobro_de_uso
-                            print(f"{canal.barcos[i]} ha salido del canal, y ha pagado {canal.cobro_de_uso} al canal")
-                            canal.barcos.pop(i)
+                            print(f"{canal.barcos[contador_3].nombre} ha salido del canal, y ha pagado {canal.cobro_de_uso} al canal")
+                            canal.barcos.pop(contador_3)
+                            canal.barcos_que_pasaron += 1
+                        contador_3 += 1
                     canal.horas_simuladas += 1
+                    print(f"Dinero disponible: {canal.dinero}")
                     print("Presiona Enter para continuar")
                     input()
 
-
-                    pass
                 elif opcion_accion == "4":
                     print(f"*** Estado del canal *** \n"
                           f"\n---------------------------------------------------\n"
