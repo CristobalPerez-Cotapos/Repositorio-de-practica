@@ -1,11 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,vscode
 
-mercancia.csv
-barcos.csv
-canales.csv
-tripulantes.csv
-
+*.csv
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
