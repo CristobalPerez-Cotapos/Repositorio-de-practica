@@ -23,8 +23,8 @@ class Barcos(ABC):
         self.tripulacion = []                      # Con los objetos tripulación
         self.codigos_carga = carga
         self.carga = []                            # idem, pero con la carga
-        self.encallado = False               # indica si está encallado o no
-        self.avance = 0                     # indica cuanto ha avanzado el barco
+        self.encallado = False      # indica si está encallado o no
+        self.avance = 0                  # indica cuanto ha avanzado el barco
         self.canal = None
         self.ocurrencia_evento = False
         self.horas_en_canal = 0
@@ -63,7 +63,7 @@ class Barcos(ABC):
         ecuacion = (self.velocidad_base + self.peso_mercancia - self.exp_tripulacion)/120
         if ecuacion < 0:
             ecuacion = 0
-        minimo = max(1, ecuacion)
+        minimo = min(1, ecuacion)
         return minimo
 
     @abstractmethod
@@ -158,8 +158,8 @@ class Mercancia:  # Completada
                 multa = 0
             self.barco.canal.dinero -= multa
             self.barco.canal.dinero_gastado += multa
-            print(f"Se ha cobrado {multa} al canal {self.barco.canal} por la expiración de {self.tipo} "
-                  f"en el {self.barco}")
+            print(f"Se ha cobrado {multa} al {self.barco.canal.nombre} por la expiración de {self.tipo} "
+                  f"en el {self.barco.nombre}")
         else:
             self.tiempo_expiracion -= 1
 
@@ -276,7 +276,7 @@ class Canal:
                 else:
                     i.dias_averia -= 1
                     print(f"{i.nombre} sigue averiado, le faltan {i.dias_averia}" 
-                    f"horas para volver a avanzar")
+                    f" horas para volver a avanzar")
             else:
                 if i.dias_averia != 0:
                     i.dias_averia -= 1
@@ -294,10 +294,12 @@ class Canal:
         if self.probablidad_de_desencallar >= azar:
             barco.encallado = False
             print(f"El barco {barco.nombre} ha sido desencallado con éxito :D")
-            pass
+            print("Presiona enter para continuar")
+            input()
         else:
             print(f"No se ha podido desencallar el barco {barco.nombre} :( ")
-            pass
+            print("Presiona enter para continuar")
+            input()
 
     def pagar_mantenimiento(self):
         for i in self.barcos:
