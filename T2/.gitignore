@@ -1,0 +1,7 @@
+
+*.csv
+_pycache_
+.idea
+assets
+*.PDF
+

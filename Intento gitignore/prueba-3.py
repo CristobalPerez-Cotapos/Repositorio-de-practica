@@ -1,22 +1,30 @@
-import threading
-import time
-from random import randint
+import sys
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel)
 
 
-def cuenta_hasta_diez():
-    nombre_thread = threading.current_thread().name
-    for numero in range(1, 11):
-        time.sleep(randint(1, 5))
-        print(f"{nombre_thread}: {numero}...")
+class MiVentana(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.inicializa_gui()
 
-# Instancia 5 threads distintos y ejecútalos.
-uno = threading.Thread(name="uno", target = cuenta_hasta_diez)
-dos = threading.Thread(name="dos", target = cuenta_hasta_diez)
-tres = threading.Thread(name="tres", target = cuenta_hasta_diez)
-cuatro = threading.Thread(name="cuatro", target = cuenta_hasta_diez)
-cinco = threading.Thread(name="cinco", target = cuenta_hasta_diez)
-uno.start()
-dos.start()
-tres.start()
-cuatro.start()
-cinco.start()
+    def inicializa_gui(self):
+        self.etiqueta = QLabel('Etiqueta', self)
+        self.etiqueta.move(20, 10)
+        self.resize(self.etiqueta.sizeHint())
+
+        self.setGeometry(300, 300, 290, 150)
+        self.setWindowTitle('Teclado')
+        self.show()
+
+    def keyPressEvent(self, event):
+        """
+        Este método maneja el evento que se produce al presionar las teclas.
+        """
+        self.etiqueta.setText(f'Presionaron la tecla: {event.text()} de código: {event.key()}')
+        self.etiqueta.resize(self.etiqueta.sizeHint())
+
+
+if __name__ == '__main__':
+    app = QApplication([])
+    ex = MiVentana()
+    sys.exit(app.exec_())
