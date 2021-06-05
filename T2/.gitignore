@@ -1,6 +1,6 @@
 
 *.csv
-_pycache_
+__pycache__
 .idea
 assets
 *.PDF

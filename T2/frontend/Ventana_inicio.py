@@ -2,24 +2,27 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout,
                              QPushButton)
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
+import parametros as p
+from backend.logica_de_juego import Personaje
 
 
 
 class VentanaInicio(QWidget):
-    senal_enviar_nombre = pyqtSignal(str)
+    senal_enviar_nombre = pyqtSignal(dict)
     senal_ver_mejores = pyqtSignal()
 
-    def __init__(self, ancho, alto, ruta_logo):
+    def __init__(self):
         super().__init__()
-        self.size = (ancho, alto)
-        self.resize(ancho, alto)
+        self.size = (p.ANCHO, p.LARGO)
+        self.resize(p.ANCHO, p.LARGO)
+        self.setGeometry(p.x, p.y, p.LARGO, p.ANCHO)
         self.setWindowTitle("Ventana de inicio")
-        self.init_gui(ruta_logo)
+        self.init_gui(p.RUTA_LOGO)
 
     def init_gui(self, ruta_logo):
         self.imagen = QLabel(self)
         pixeles = QPixmap(ruta_logo)
-        pixeles2 = pixeles.scaled(600, 600 , Qt.KeepAspectRatio)
+        pixeles2 = pixeles.scaled(600, 600, Qt.KeepAspectRatio)
         self.imagen.setPixmap(pixeles2)
         self.imagen.setScaledContents(True)
 
@@ -43,11 +46,25 @@ class VentanaInicio(QWidget):
         self.setLayout(layout)
 
     def enviar_nombre(self):
-        if "," in self.line.text():
+        if "," in self.line.text() or len(self.line.text()) == 0:
             self.line.clear()
             self.line.setPlaceholderText("Nombre invalido")
         else:
-            self.senal_enviar_nombre.emit(self.line.text())
+            self.hide()
+            homero = Personaje("Homero")
+            lisa = Personaje("Lisa")
+            moe = Personaje("Moe")
+            krusty = Personaje("Krusty")
+            dicionario_preparacion = {
+                "nombre_jugador": self.line.text(),
+                "homero": homero,
+                "lisa": lisa,
+                "moe": moe,
+                "krusty": krusty
+            }
+            self.senal_enviar_nombre.emit(dicionario_preparacion)
 
     def ver_mejores(self):
+        self.hide()
         self.senal_ver_mejores.emit()
+
