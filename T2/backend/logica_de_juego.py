@@ -1,12 +1,7 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QPushButton)
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QThread, QMimeData
-from PyQt5.QtGui import QPixmap, QDrag, QPainter, QCursor
-from random import randint
-import PyQt5
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer
+from PyQt5.QtGui import QPixmap
 import parametros as p
-from time import sleep
-import threading
 from backend.logica_animacion import Animacion
 
 
@@ -26,13 +21,13 @@ class Personaje(QLabel):
         self.items = []
         self.anim = Animacion("", "", self)
 
-
     def init_gui(self):
         self.ruta_imagen_inicial = self.carpeta_personaje + "/down_1.png"
         pixles = QPixmap(self.ruta_imagen_inicial)
         pixeles2 = pixles.scaled(60, 60, Qt.KeepAspectRatio)
         self.setPixmap(pixeles2)
         self.setScaledContents(True)
+
 
     def moverse(self, direccion):
         if direccion == "arriba":
@@ -107,7 +102,6 @@ class Personaje(QLabel):
         self.zona = zona
         self.grilla = grilla
 
-
     def colision(self, objeto):
         if objeto.tipo == "obstaculo":
             pass
@@ -171,7 +165,7 @@ class Personaje(QLabel):
             contador = 0
             i = 0
             while i < len(self.items):
-                if self.items[i].ruta == p.CARPETA_OBJETOS +"/Dona.png":
+                if self.items[i].ruta == p.CARPETA_OBJETOS + "/Dona.png":
                     contador += 1
                     i += 1
                 elif self.items[i].malo:
@@ -189,9 +183,10 @@ class Personaje(QLabel):
             for i in self.zona.dic_objetos:
                 if isinstance(self.zona.dic_objetos[i], Objeto):
                     objeto = self.zona.dic_objetos[i]
-                    if objeto.ruta == (p.CARPETA_OBJETOS +"/Saxofon.png") \
+                    if objeto.ruta == (p.CARPETA_OBJETOS + "/Saxofon.png") \
                             and not objeto.habilidad_lisa:
-                        objeto.timer.setInterval((objeto.tiempo + p.PONDERADOR_SAXOFONES_LISA) * 1000)
+                        objeto.timer.setInterval((objeto.tiempo +
+                                                  p.PONDERADOR_SAXOFONES_LISA) * 1000)
                         objeto.timer.timeout.connect(objeto.expirar)
                         objeto.habilidad_lisa = True
         elif self.personaje == "Moe":

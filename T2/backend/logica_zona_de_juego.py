@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QPushButton, QProgressBar)
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer
+from PyQt5.QtWidgets import (QLabel, QGridLayout)
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from random import randint, uniform
 from backend.logica_de_juego import Personaje, Objeto, Gorgory
 import parametros as p
 
 
-class Zona_de_juego(QLabel):
+class ZonaDeJuego(QLabel):
 
     def __init__(self, ruta_carpeta_mapa, personaje, ventana_juego):
         super().__init__()
@@ -21,7 +20,7 @@ class Zona_de_juego(QLabel):
         self.agregar_personaje()
         self.hay_gorogry = False
 
-    def init_gui(self,ruta_mapa):
+    def init_gui(self, ruta_mapa):
         ruta_baldosas = ruta_mapa + "/Baldosa.png"
         pixeles_fondo = QPixmap(ruta_baldosas)
         pixeles_fondo = pixeles_fondo.scaled(p.X_BALDOSAS, p.Y_BALDOSAS, Qt.IgnoreAspectRatio)
@@ -31,9 +30,9 @@ class Zona_de_juego(QLabel):
             for j in range(p.ANCHO_GRAVA):
                 a = uniform(0, 1)
                 if a < p.PROBABILIDAD_OBSTACULO_INICIAL and (i != 0 and j != 0):
-                    if not (isinstance(self.dic_objetos[i-1,j], Objeto)) \
+                    if not (isinstance(self.dic_objetos[i-1, j], Objeto)) \
                             and not (isinstance(self.dic_objetos[i, j-1], Objeto))\
-                            and not (isinstance(self.dic_objetos[i -1, j-1], Objeto)):
+                            and not (isinstance(self.dic_objetos[i - 1, j-1], Objeto)):
                         b = randint(1, 3)
                         ruta_objeto = f"{self.ruta_carpeta_mapa}/Obstaculo{str(b)}.png"
                         label = Objeto(ruta_objeto, "obstaculo", self, (i, j))
@@ -78,7 +77,8 @@ class Zona_de_juego(QLabel):
                     and not (self.personaje.y == rand_x and self.personaje.x == rand_y):
                 if prob <= p.PROB_BUENO:
                     rand_bueno = randint(2, 3)
-                    objeto = Objeto(self.objetos_personaje()[rand_bueno], "item", self, (rand_y, rand_x))
+                    objeto = Objeto(self.objetos_personaje()[rand_bueno],
+                                    "item", self, (rand_y, rand_x))
                     if rand_bueno == 2:
                         objeto.corazon = True
                     objeto.bueno = True
@@ -86,13 +86,15 @@ class Zona_de_juego(QLabel):
                     creado = True
                     self.dic_objetos[rand_y, rand_x] = objeto
                 elif prob <= p.PROB_BUENO + p.PROB_VENENO:
-                    objeto = Objeto(self.objetos_personaje()[0], "item", self, (rand_y, rand_x))
+                    objeto = Objeto(self.objetos_personaje()[0],
+                                    "item", self, (rand_y, rand_x))
                     objeto.malo = True
                     self.grilla.addWidget(objeto, rand_y, rand_x)
                     creado = True
                     self.dic_objetos[rand_y, rand_x] = objeto
                 elif prob <= p.PROB_BUENO + p.PROB_VENENO + p.PROB_NORMAL:
-                    objeto = Objeto(self.objetos_personaje()[1], "item", self, (rand_y, rand_x))
+                    objeto = Objeto(self.objetos_personaje()[1],
+                                    "item", self, (rand_y, rand_x))
                     self.grilla.addWidget(objeto, rand_y, rand_x)
                     creado = True
                     self.dic_objetos[rand_y, rand_x] = objeto
@@ -102,6 +104,8 @@ class Zona_de_juego(QLabel):
             self.ventana_juego.timer_aparicion.stop()
 
     def agrgar_gorgory(self):
-        self.gorgory = Gorgory("Gorgory", self.ventana_juego.movimientos_realizados, self, self.grilla)
+        self.gorgory = Gorgory("Gorgory",
+                               self.ventana_juego.movimientos_realizados,
+                               self, self.grilla)
         self.grilla.addWidget(self.gorgory, 0, 0)
         self.hay_gorogry = True

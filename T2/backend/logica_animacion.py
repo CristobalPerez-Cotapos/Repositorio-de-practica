@@ -1,12 +1,9 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QPushButton)
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QThread, QMimeData
-from PyQt5.QtGui import QPixmap, QDrag, QPainter, QCursor
-from random import randint
-import PyQt5
+from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtGui import QPixmap
 import parametros as p
 from time import sleep
 import threading
+
 
 class Animacion(QThread):
     lock_animacion = threading.Lock()

@@ -4,7 +4,7 @@ from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
 import parametros as p
 from backend.logica_de_juego import Personaje
-
+from backend.logica_musica import Musica
 
 
 class VentanaInicio(QWidget):
@@ -42,7 +42,8 @@ class VentanaInicio(QWidget):
         layout.addWidget(self.boton_nueva_partida)
         layout.addWidget(self.boton_ver_mejores)
         layout.addStretch(1)
-
+        self.musica = Musica()
+        self.musica.comenzar()
         self.setLayout(layout)
 
     def enviar_nombre(self):
@@ -50,6 +51,7 @@ class VentanaInicio(QWidget):
             self.line.clear()
             self.line.setPlaceholderText("Nombre invalido")
         else:
+            self.musica.cancion.stop()
             self.hide()
             homero = Personaje("Homero")
             lisa = Personaje("Lisa")
@@ -66,5 +68,10 @@ class VentanaInicio(QWidget):
 
     def ver_mejores(self):
         self.hide()
+        self.musica.cancion.stop()
         self.senal_ver_mejores.emit()
 
+    def mostrarse(self):
+        self.show()
+        self.musica = Musica()
+        self.musica.comenzar()

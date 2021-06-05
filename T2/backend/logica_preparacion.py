@@ -1,14 +1,10 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QPushButton)
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QThread, QMimeData
-from PyQt5.QtGui import QPixmap, QDrag, QPainter, QCursor
-from random import randint
-import PyQt5
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import pyqtSignal, Qt, QMimeData
+from PyQt5.QtGui import QPixmap, QDrag, QPainter
 import parametros as p
-from time import sleep
-import threading
 
-class Personaje_preparacion(QLabel):
+
+class PersonajePreparacion(QLabel):
 
     senal_vida_personje = pyqtSignal(float)
 
@@ -26,13 +22,10 @@ class Personaje_preparacion(QLabel):
         self.setPixmap(pixeles2)
         self.setScaledContents(False)
 
-
     def mousePressEvent(self, evento):
         if evento.button() == Qt.LeftButton:
             self.senal_vida_personje.emit(self.vida)
             self.drag_posicion_inicial = evento.pos()
-
-
 
     def mouseMoveEvent(self, evento):
         if evento.buttons() & Qt.LeftButton:
@@ -51,7 +44,6 @@ class Personaje_preparacion(QLabel):
     def mousePressEvent(self, evento):
         if evento.buttons() & Qt.LeftButton:
             self.senal_vida_personje.emit(self.vida)
-
 
 
 class Edificio_preparacion(QLabel):
@@ -93,4 +85,3 @@ class Edificio_preparacion(QLabel):
     #    eleccion = {"personaje": nombre_personaje, "mapa":  self.nombre_mapa}
     #    self.fondo.ventana_preparacion.enviar_senal_eleccion(eleccion)
     #    evento.acceptProposedAction()
-

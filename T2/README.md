@@ -101,4 +101,5 @@ La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/b
 
 
 referencias:
+AS2, musica
 https://learndataanalysis.org/create-label-to-label-drag-and-drop-effect-pyqt5-tutorial/

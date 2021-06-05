@@ -1,11 +1,12 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout,
+from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
                              QPushButton)
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
 import parametros as p
+from backend.logica_musica import Musica
 
 
-class Ventana_puntajes(QWidget):
+class VentanaPuntajes(QWidget):
     senal_vovler_puntajes = pyqtSignal()
 
     def __init__(self, ancho, alto):
@@ -43,6 +44,7 @@ class Ventana_puntajes(QWidget):
 
     def boton_vovler_clikeado(self):
         self.hide()
+        self.musica.cancion.stop()
         self.senal_vovler_puntajes.emit()
 
     def actualzar_archivo(self, diccionario):
@@ -71,6 +73,8 @@ class Ventana_puntajes(QWidget):
 
         self.vbox.addWidget(self.puntajes)
         self.vbox.addWidget(self.boton_volver)
+        self.musica = Musica()
+        self.musica.comenzar()
 
 
 class VboxPuntajes(QLabel):
@@ -87,12 +91,9 @@ class VboxPuntajes(QLabel):
             i = i.strip("\n")
             i = i.split(",")
             nuevas_lineas.append(i)
-
-        print(nuevas_lineas)
+        nuevas_lineas.pop(0)
 
         nuevas_lineas = sorted(nuevas_lineas, key=lambda x: int(x[1]), reverse=True)
-
-        print(nuevas_lineas)
 
         vbox = QVBoxLayout()
         vbox.addStretch(1)
@@ -108,4 +109,3 @@ class VboxPuntajes(QLabel):
                 vbox.addLayout(hbox)
         vbox.addStretch(1)
         self.setLayout(vbox)
-

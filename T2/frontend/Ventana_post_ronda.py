@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout,
-                             QPushButton, QGridLayout, QProgressBar, QComboBox)
+from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
+                             QPushButton, QGridLayout)
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
 import parametros as p
-from backend.logica_preparacion import Personaje_preparacion, Edificio_preparacion
-from backend.logica_de_juego import Personaje
+from backend.logica_musica import Musica
 
 
 class VentanaPostRonda(QWidget):
@@ -40,6 +39,8 @@ class VentanaPostRonda(QWidget):
             self.num_items_malos.setText(str(diccionario["items malos"]))
             self.num_items_buenos.setText(str(diccionario["items buenos"]))
             self.jugador = diccionario["jugador"]
+            self.musica = Musica()
+            self.musica.comenzar()
             self.show()
 
     def init_gui(self):
@@ -88,8 +89,6 @@ class VentanaPostRonda(QWidget):
         grilla_datos.addWidget(txt_items_malos, 3, 0)
         grilla_datos.addWidget(self.num_items_malos, 3, 1)
 
-
-
         hbox_botones = QHBoxLayout()
         self.boton_continuar = QPushButton(self)
         self.boton_continuar.setText("Continuar juego")
@@ -107,6 +106,8 @@ class VentanaPostRonda(QWidget):
         vbox.addLayout(grilla_datos)
         vbox.addWidget(self.mensaje_indicador)
         vbox.addLayout(hbox_botones)
+        self.musica = Musica()
+        self.musica.comenzar()
 
         self.setLayout(vbox)
 
@@ -116,16 +117,18 @@ class VentanaPostRonda(QWidget):
             self.mensaje_indicador.setStyleSheet("background-color: green")
             self.boton_continuar.setDisabled(False)
         else:
-            self.mensaje_indicador.setText("Te has quedado sin vida, no puedes continuar :(")
+            self.mensaje_indicador.setText(f"Te has quedado sin vida, "
+                                           f"no puedes continuar :(")
             self.mensaje_indicador.setStyleSheet("background-color: red")
             self.boton_continuar.setDisabled(True)
 
     def boton_continuar_clickeado(self):
         if self.diccionario["vida"] > 0:
             self.senal_continuar_post_ronda.emit(self.diccionario)
+            self.musica.cancion.stop()
             self.hide()
 
     def boton_salir_clickeado(self):
         self.senal_salir_post_ronda.emit(self.diccionario)
+        self.musica.cancion.stop()
         self.hide()
-

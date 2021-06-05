@@ -1,16 +1,17 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout,
+from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
                              QPushButton, QProgressBar)
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer
 from PyQt5.QtGui import QPixmap
-from random import randint, uniform
-from backend.logica_de_juego import Personaje, Objeto, Gorgory
-from backend.logica_zona_de_juego import Zona_de_juego
+from backend.logica_de_juego import Objeto
+from backend.logica_zona_de_juego import ZonaDeJuego
 import parametros as p
+from backend.logica_musica import Musica
 
 
-class Ventana_juego(QWidget):
+class VentanaJuego(QWidget):
 
     senal_fin_ronda = pyqtSignal(dict)
+    senal_boton_salir = pyqtSignal(dict)
 
     def __init__(self, ancho, alto):
         super().__init__()
@@ -27,6 +28,8 @@ class Ventana_juego(QWidget):
         self.movimientos_realizados = []
         self.pausa = False
         self.jugador = ""
+        self.lista_cheat_code = []
+        self.cheat_activo = False
 
     def init_gui(self, ruta_carpeta_mapa):
         logo = QLabel(self)
@@ -74,7 +77,7 @@ class Ventana_juego(QWidget):
         boton_salir.setText("Salir")
         vbox_datos_4.addWidget(self.boton_pausa)
         vbox_datos_4.addWidget(boton_salir)
-        boton_salir.clicked.connect(self.terminar_ronda)
+        boton_salir.clicked.connect(self.presion_boton_salir)
 
         hbox_datos = QHBoxLayout()
         hbox_datos.addWidget(logo)
@@ -98,6 +101,9 @@ class Ventana_juego(QWidget):
         self.setGeometry(200, 25, self.ancho, self.alto)
         self.setLayout(self.vbox)
 
+        self.musica = Musica()
+        self.musica.comenzar()
+
         self.zona.personaje.senal_item_recogido.connect(self.procesar_item)
         self.zona.personaje.senal_movimieto.connect(self.movimientos_gorgory)
 
@@ -106,6 +112,7 @@ class Ventana_juego(QWidget):
             self.timer_duracion_partida.start()
             self.timer_aparicion.start()
             self.pausa = False
+            self.musica.cancion.play()
             for i in self.zona.dic_objetos:
                 if isinstance(self.zona.dic_objetos[i], Objeto):
                     if self.zona.dic_objetos[i].tipo == "item":
@@ -114,6 +121,7 @@ class Ventana_juego(QWidget):
             self.timer_duracion_partida.stop()
             self.timer_aparicion.stop()
             self.pausa = True
+            self.musica.cancion.stop()
             for i in self.zona.dic_objetos:
                 if isinstance(self.zona.dic_objetos[i], Objeto):
                     if self.zona.dic_objetos[i].tipo == "item":
@@ -132,6 +140,7 @@ class Ventana_juego(QWidget):
             self.items_buenos += 1
             self.label_items_buenos.setText(f"ITEMS BUENOS: {self.items_buenos}")
         elif objeto.bueno and not objeto.corazon:
+
             self.puntaje += (p.PUNTOS_OBJETO_NORMAL * 2)
             self.items_buenos += 1
             self.label_puntaje.setText(f"PUNTAJE: {self.puntaje}")
@@ -150,6 +159,37 @@ class Ventana_juego(QWidget):
         self.vida = round(self.vida, 2)
 
     def keyPressEvent(self, evento):
+        letra = evento.text()
+        if evento.text() == "p":
+            self.pausar()
+        elif letra == "v" or letra == "n" or self.cheat_activo:
+            self.cheat_activo = True
+            if letra not in "vidniv":
+                self.cheat_activo = False
+                self.lista_cheat_code = []
+            elif (letra in self.lista_cheat_code and (letra == "v" or letra == "n"))\
+                    and not (self.lista_cheat_code == ["n", "i"] and letra == "v"):
+                self.lista_cheat_code = []
+                self.lista_cheat_code.append(letra)
+            elif letra in self.lista_cheat_code and not (letra == "v" or letra == "n"):
+                self.cheat_activo = False
+                self.lista_cheat_code = []
+            else:
+                self.lista_cheat_code.append(letra)
+                if len(self.lista_cheat_code) >= 4:
+                    self.lista_cheat_code = []
+                    self.cheat_activo = False
+                else:
+                    if self.lista_cheat_code == ["v", "i", "d"]:
+                        self.vida += 0.5
+                        if self.vida > 1:
+                            self.vida = 1
+                        self.barra_vida.setValue(self.vida * 100)
+                        self.cheat_activo = False
+                    elif self.lista_cheat_code == ["n", "i", "v"]:
+                        self.terminar_ronda()
+                        self.cheat_activo = False
+
         if not self.zona.personaje.anim.isRunning() and not self.pausa:
             if evento.text() == "w":
                 self.zona.personaje.moverse("arriba")
@@ -164,7 +204,7 @@ class Ventana_juego(QWidget):
         if not self.gui_instanciado:
             carpeta_mapa = self.ruta_carpeta_mapa(eleccion["mapa"])
             self.dificultad = eleccion["dificultad"]
-            self.zona = Zona_de_juego(carpeta_mapa, eleccion["personaje"], self)
+            self.zona = ZonaDeJuego(carpeta_mapa, eleccion["personaje"], self)
             self.vida = eleccion["vida"]
             self.init_gui(carpeta_mapa)
             self.comenzar_partida()
@@ -176,7 +216,7 @@ class Ventana_juego(QWidget):
             self.fondo.hide()
             carpeta_mapa = self.ruta_carpeta_mapa(eleccion["mapa"])
             self.dificultad = eleccion["dificultad"]
-            self.zona = Zona_de_juego(carpeta_mapa, eleccion["personaje"], self)
+            self.zona = ZonaDeJuego(carpeta_mapa, eleccion["personaje"], self)
             self.vida = eleccion["vida"]
             self.barra_vida.setValue(self.vida * 100)
             ruta_fondo = carpeta_mapa + "/Fondo.png"
@@ -198,6 +238,8 @@ class Ventana_juego(QWidget):
             if eleccion["items malos"] == 0 and eleccion["items buenos"] == 0 \
                     and eleccion["puntaje"] == 0 and eleccion["ronda"] == 0:
                 self.reiniciar_puntajes()
+            self.musica = Musica()
+            self.musica.comenzar()
             self.show()
 
     def reiniciar_puntajes(self):
@@ -268,6 +310,7 @@ class Ventana_juego(QWidget):
         self.timer_duracion_partida.stop()
         self.tiempo = 0
         self.barra_tiempo.setValue(0)
+        self.musica.cancion.stop()
         if self.zona.hay_gorogry:
             self.zona.gorgory.timer_atrapar.stop()
 
@@ -302,3 +345,24 @@ class Ventana_juego(QWidget):
             self.zona.gorgory.anadir_movimiento(direccion)
         else:
             self.movimientos_realizados.append(direccion)
+
+    def presion_boton_salir(self):
+        self.hide()
+        self.zona.hide()
+        personaje_usado = self.zona.personaje
+        dicionario_a_enviar = {
+            "puntaje": self.puntaje,
+            "items buenos": self.items_buenos,
+            "items malos": self.items_malos,
+            "ronda": self.ronda,
+            "personaje usado": personaje_usado,
+            "vida": self.vida,
+            "jugador": self.jugador
+        }
+        self.senal_boton_salir.emit(dicionario_a_enviar)
+        self.timer_duracion_partida.stop()
+        self.tiempo = 0
+        self.barra_tiempo.setValue(0)
+        self.musica.cancion.stop()
+        if self.zona.hay_gorogry:
+            self.zona.gorgory.timer_atrapar.stop()

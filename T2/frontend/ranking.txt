@@ -1,0 +1,10 @@
+nombre,puntaje
+awd,10
+prueba boton salir,50
+awd,40
+awd,0
+awd,180
+V,230
+Diego,50
+awd,70
+awd,90

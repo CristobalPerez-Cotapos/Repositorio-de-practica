@@ -5,7 +5,8 @@ x = 450
 y = 60
 
 RUTA_LOGO = "frontend/assets/sprites/Logo.png"
-RUTA_PUNTAJES = "frontend/mejores_puntajes.csv"
+RUTA_PUNTAJES = "frontend/ranking.txt"
+RUTA_CANCION = "frontend/assets/canciones/musica.wav"
 
 RUTA_SPRITES_HOMERO = "frontend/assets/sprites/Personajes/Homero"
 RUTA_SPRITES_LISA = "frontend/assets/sprites/Personajes/Lisa"
@@ -32,8 +33,8 @@ CARPETA_OBJETOS = "frontend/assets/sprites/Objetos"
 
 VELOCIDAD_HOMERO = 20
 VELOCIDAD_LISA = 30
-VELOCIDAD_MOE = 1
-VELOCIDAD_KRUSTY = 1
+VELOCIDAD_MOE = 15
+VELOCIDAD_KRUSTY = 15
 VELOCIDAD_GORGORY = 20
 
 ANCHO_GRAVA = 12
@@ -62,8 +63,10 @@ PONDERADOR_CORAZON = 0.2
 PROB_VENENO = 0.4
 PONDERADOR_VENENO = 0.3
 
-TIEMPO_DEALY_INTRO = 10000
+TIEMPO_DEALY_INTRO = 10
 TIEMPO_DELAY_AVANZADA = 5
 
 PONDERADOR_SAXOFONES_LISA = 5
 PONDERADOR_HOMERO = 0.4
+
+VIDA_TRAMPA = 0.5

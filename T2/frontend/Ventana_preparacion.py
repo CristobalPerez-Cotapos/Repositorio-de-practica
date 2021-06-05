@@ -1,10 +1,11 @@
-from PyQt5.QtWidgets import (QLabel, QWidget, QLineEdit, QVBoxLayout, QHBoxLayout,
-                             QPushButton, QGridLayout, QProgressBar, QComboBox)
+from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout,
+                             QGridLayout, QProgressBar, QComboBox)
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
 import parametros as p
-from backend.logica_preparacion import Personaje_preparacion, Edificio_preparacion
+from backend.logica_preparacion import PersonajePreparacion, Edificio_preparacion
 from backend.logica_de_juego import Personaje
+from backend.logica_musica import Musica
 
 
 class VentanaPreparacion(QWidget):
@@ -28,22 +29,20 @@ class VentanaPreparacion(QWidget):
         self.vida_personaje = 0
         self.gui_instanciado = False
 
-
     def init_gui(self):
         grilla_personajes = QGridLayout()
-        self.homero_preparacion = Personaje_preparacion(self.homero)
+        self.homero_preparacion = PersonajePreparacion(self.homero)
         self.homero_preparacion.vida = self.vida_homero
-        self.lisa_preparacion = Personaje_preparacion(self.lisa)
+        self.lisa_preparacion = PersonajePreparacion(self.lisa)
         self.lisa_preparacion.vida = self.vida_lisa
-        self.moe_preparacion = Personaje_preparacion(self.moe)
+        self.moe_preparacion = PersonajePreparacion(self.moe)
         self.moe_preparacion.vida = self.vida_moe
-        self.krusty_preparacion = Personaje_preparacion(self.krusty)
+        self.krusty_preparacion = PersonajePreparacion(self.krusty)
         self.krusty_preparacion.vida = self.vida_krusty
         grilla_personajes.addWidget(self.homero_preparacion, 0, 0)
         grilla_personajes.addWidget(self.lisa_preparacion, 0, 1)
         grilla_personajes.addWidget(self.moe_preparacion, 1, 0)
         grilla_personajes.addWidget(self.krusty_preparacion, 1, 1)
-
 
         logo = QLabel(self)
         pixeles_logo = QPixmap(p.RUTA_LOGO)
@@ -62,7 +61,8 @@ class VentanaPreparacion(QWidget):
 
         vbox_elecciones_2 = QVBoxLayout()
         mensaje_selecciona_dificultad = QLabel()
-        mensaje_selecciona_dificultad.setText("Selecciona la dificultad de la siguiente ronda")
+        mensaje_selecciona_dificultad.setText(f"Selecciona"
+                                              f" la dificultad de la siguiente ronda")
         self.combo_box = MiComboBox(self)
         self.combo_box.addItems(["Intro", "Avanzada"])
         self.mensaje_numero_ronda = QLabel()
@@ -71,7 +71,6 @@ class VentanaPreparacion(QWidget):
         vbox_elecciones_2.addWidget(self.combo_box)
         vbox_elecciones_2.addWidget(self.mensaje_numero_ronda)
         hbox_elecciones.addLayout(vbox_elecciones_2)
-
 
         hbox_datos = QHBoxLayout()
         self.barra_vida = QProgressBar(self)
@@ -87,11 +86,18 @@ class VentanaPreparacion(QWidget):
         hbox_datos.addWidget(self.label_items_buenos)
         hbox_datos.addWidget(self.label_items_malos)
 
-        self.zona = Fondo_con_edificios(self)
+        self.mensaje_colisiones = QLabel(self)
+        self.mensaje_colisiones.setText("Arrastra a un "
+                                        "personaje y hazlo "
+                                        "colisionar con un edificio")
+        self.mensaje_colisiones.setStyleSheet("background-color: green")
+
+        self.zona = FondoConEdificios(self)
 
         self.vbox = QVBoxLayout()
         self.vbox.addLayout(hbox_elecciones)
         self.vbox.addLayout(hbox_datos)
+        self.vbox.addWidget(self.mensaje_colisiones)
         self.vbox.addWidget(self.zona)
         self.setLayout(self.vbox)
 
@@ -100,6 +106,8 @@ class VentanaPreparacion(QWidget):
         self.moe_preparacion.senal_vida_personje.connect(self.actualizar_vida)
         self.krusty_preparacion.senal_vida_personje.connect(self.actualizar_vida)
 
+        self.musica = Musica()
+        self.musica.comenzar()
 
     def actualizar_vida(self, vida):
         self.barra_vida.setValue(vida * 100)
@@ -124,10 +132,15 @@ class VentanaPreparacion(QWidget):
             self.moe_preparacion.vida = 1
             self.krusty_preparacion.vida = 1
             self.zona.hide()
-            self.zona = Fondo_con_edificios(self)
+            self.zona = FondoConEdificios(self)
             self.vbox.addWidget(self.zona)
+            self.mensaje_colisiones.setText("Arrastra a un "
+                                            "personaje y hazlo "
+                                            "colisionar con un edificio")
+            self.mensaje_colisiones.setStyleSheet("background-color: green")
+            self.musica = Musica()
+            self.musica.comenzar()
             self.show()
-
 
     def crear_personajes(self, diccionario):
         if not self.personajes_creados:
@@ -136,7 +149,6 @@ class VentanaPreparacion(QWidget):
             self.lisa = diccionario["lisa"]
             self.moe = diccionario["moe"]
             self.krusty = diccionario["krusty"]
-
 
     def enviar_senal_eleccion(self, eleccion):
         eleccion["dificultad"] = self.combo_box.currentText()
@@ -147,6 +159,7 @@ class VentanaPreparacion(QWidget):
         eleccion["puntaje"] = self.puntaje
         eleccion["jugador"] = self.nombre_jugador
         self.senal_eleccion.emit(eleccion)
+        self.musica.cancion.stop()
         self.hide()
 
     def keyPressEvent(self, evento):
@@ -170,7 +183,10 @@ class VentanaPreparacion(QWidget):
                 elif evento.text() == "d":
                     self.zona.personaje.moverse_preparacion("derecha")
                 elif evento.text() == "s":
-                    pass
+                    self.mensaje_colisiones.setText("Te dije que lo hicieras"
+                                                    " colisionar con un edificio, "
+                                                    "no con el pasto >:(")
+                    self.mensaje_colisiones.setStyleSheet("background-color: red")
 
     def continuar_jugando(self, diccionario):
         if diccionario["personaje usado"].personaje == "Homero":
@@ -190,7 +206,6 @@ class VentanaPreparacion(QWidget):
             self.krusty_preparacion.vida = diccionario["vida"]
             self.actualizar_vida(self.krusty_preparacion.vida)
 
-
         self.ronda = diccionario["ronda"]
         self.mensaje_numero_ronda.setText(f"RONDA: {self.ronda}")
         self.items_malos = diccionario["items malos"]
@@ -199,6 +214,8 @@ class VentanaPreparacion(QWidget):
         self.label_items_buenos.setText(f"ITEMS BUENOS: {self.items_buenos}")
         self.puntaje = diccionario["puntaje"]
         self.label_puntos.setText(f"PUNTOS: {self.puntaje}")
+        self.musica = Musica()
+        self.musica.comenzar()
 
         self.show()
 
@@ -213,15 +230,13 @@ class VentanaPreparacion(QWidget):
             return self.krusty_preparacion
 
 
-class Fondo_con_edificios(QLabel):
-
+class FondoConEdificios(QLabel):
 
     def __init__(self, ventana_preparacion):
         super().__init__()
         self.init_gui()
         self.ventana_preparacion = ventana_preparacion
         self.hay_personaje = False
-
 
     def init_gui(self):
         pixeles_fondo = QPixmap(p.RUTA_FONDO)
@@ -242,7 +257,6 @@ class Fondo_con_edificios(QLabel):
         casilla_3.senal_drop_cassilla_calle.connect(self.drop_personaje)
         casilla_4 = CasillaCalle(4, self)
         casilla_4.senal_drop_cassilla_calle.connect(self.drop_personaje)
-
 
         self.grilla = QGridLayout()
         self.grilla.addWidget(primaria, 0, 0)
@@ -291,13 +305,15 @@ class CasillaCalle(QLabel):
 
     def dropEvent(self, evento):
         nombre_personaje = evento.mimeData().text()
-        diccionario_a_enviar = {"nombre" : nombre_personaje, "casilla": self.numero}
+        diccionario_a_enviar = {"nombre": nombre_personaje, "casilla": self.numero}
         self.senal_drop_cassilla_calle.emit(diccionario_a_enviar)
         evento.acceptProposedAction()
+
 
 class MiComboBox(QComboBox):
     def __init__(self, ventana):
         super().__init__()
         self.ventana = ventana
+
     def keyPressEvent(self, evento):
         self.ventana.keyPressEvent(evento)
