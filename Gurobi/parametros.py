@@ -22,7 +22,7 @@ def sumatoria(var, desde, hasta, posicion, base, par, dicc_par, pos_par, bas_par
                 else:
                     lista.append(i)
             print(lista)
-            resultado += var[tuple(lista)] *
+
 
 
     else:

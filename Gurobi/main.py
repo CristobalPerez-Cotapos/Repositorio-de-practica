@@ -1,7 +1,6 @@
-from gurobipy import GRB, Model
+from gurobipy import GRB, Model, quicksum
 from openpyxl import load_workbook
 import parametros as p
-from parametros import sumatoria
 
 model = Model("Distribución de tercera dosis")
 
@@ -20,10 +19,13 @@ for hoja in hojas:
     sheet = libro_datos[hoja]
     filas = sheet.max_row
     columnas = sheet.max_column
+    diccionario_parametros[hoja] = {}
     for i in range(filas):
+        diccionario_parametros[hoja][i+1] = {}
         for j in range(columnas):
-            diccionario_parametros[(hoja, j+1, i+1)] = sheet[letras[j] + str(i+1)].value
-print(diccionario_parametros)
+            diccionario_parametros[hoja][i+1][j+1] = sheet[letras[j] + str(i+1)].value
+for i in diccionario_parametros:
+    print(diccionario_parametros[i])
 
 ## Luego definimos las variables
 
@@ -83,7 +85,18 @@ model.update()
 
 ## Después declaramos las restricciones
 
-V_jt = {(1, 1): 1, (2, 1): 2, (3, 1): 3, (1, 2): 4, (2, 2): 3, (3, 2): 4}
+for i in range(p.I_CENTROS_VAC):
+    for m in range(p.M_METODOS_TRANSPORTE):
+        for t in range(p.T_DIAS):
+            model.addConstr(quicksum(R_ijtm[(i +1, j+1 , m +1, t+1)] * diccionario_parametros["VOL_j"][1][j+1] for j in range(p.J_TIPOS_VAC))
+                            <= diccionario_parametros["CAP_m"][1][m+1] *diccionario_parametros[f"CC_{str(i+1)}mt"][m+1][t+1],
+                            name="R1")
+for i in range(p.I_CENTROS_VAC):
+    for j in range(p.J_TIPOS_VAC):
+        for t in range(p.T_DIAS):
+            model.addConstr(diccionario_parametros[f"DE_{str(i+1)}jt"][j+1][t+1] <=
+                            quicksum(R_ijtm[(i+1, j+1, t+1, m+1)] * diccionario_parametros["CAC_j"][1][j+1]
+                                     * diccionario_parametros["PPC_m"][1][m+1] for m in p.M_METODOS_TRANSPORTE),
+                            name= "R2")
 
-print(sumatoria(V_jt, 1, 2, 1, (1,1)))
 
