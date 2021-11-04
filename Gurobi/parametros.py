@@ -36,3 +36,7 @@ def sumatoria(var, desde, hasta, posicion, base, par, dicc_par, pos_par, bas_par
             print(lista)
             resultado += var[tuple(lista)]
     return resultado
+
+
+for i in range(10):
+    print(i)

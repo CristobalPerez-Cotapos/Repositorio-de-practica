@@ -96,7 +96,48 @@ for i in range(p.I_CENTROS_VAC):
         for t in range(p.T_DIAS):
             model.addConstr(diccionario_parametros[f"DE_{str(i+1)}jt"][j+1][t+1] <=
                             quicksum(R_ijtm[(i+1, j+1, t+1, m+1)] * diccionario_parametros["CAC_j"][1][j+1]
-                                     * diccionario_parametros["PPC_m"][1][m+1] for m in p.M_METODOS_TRANSPORTE),
+                                     * diccionario_parametros["PPC_m"][1][m+1] for m in range(p.M_METODOS_TRANSPORTE)),
                             name= "R2")
 
+for i in range(p.I_CENTROS_VAC):
+    for t in range(p.T_DIAS):
+        model.addConstr(quicksum(diccionario_parametros[f"DE_{str(i+1)}jt"] for j in range(p.J_TIPOS_VAC))
+                        <= quicksum(R_ijtm[(i+1, j+1, t+1, m+1)] * diccionario_parametros["CAC_j"][1][j+1]
+                                     * diccionario_parametros["PPC_m"][1][m+1] for j in range(p.J_TIPOS_VAC)
+                                    for m in range(p.M_METODOS_TRANSPORTE)),
+                        name="R3")
+
+for j in range(p.J_TIPOS_VAC):
+    for t in range(1, p.T_DIAS):
+        model.addConstr(diccionario_parametros["V_jt"][j+1][t+1] + I_tj[j+1][t] * diccionario_parametros["PP_j"][1][j+1] ==
+                        quicksum(R_ijtm[i+1][j+1][t+1][m+1] for i in range(p.I_CENTROS_VAC) for m in range(p.M_METODOS_TRANSPORTE)) + I_tj[t+1][j+1]
+                        , name="R4")
+
+for j in range(p.J_TIPOS_VAC):
+    for t in range(1):
+        model.addConstr(diccionario_parametros["V_jt"][j+1][t+1] + diccionario_parametros["a_j"][1][j+1] * diccionario_parametros["PP_j"][1][j+1] ==
+                        quicksum(R_ijtm[i+1][j+1][t+1][m+1] for i in range(p.I_CENTROS_VAC) for m in range(p.M_METODOS_TRANSPORTE)) + I_tj[t+1][j+1]
+                        , name="Caso limite de inventario")
+
+for t in range(p.T_DIAS):
+    model.addConstr(
+        VP_t[t+1] == quicksum(quicksum(quicksum(R_ijtm[i+1][j+1][t+1][m+1] * diccionario_parametros["CAC_j"][1][j+1] for m in range(p.M_METODOS_TRANSPORTE))
+                                       -diccionario_parametros["DE_ijt"][i+1][j+1][t+1] for j in range(p.J_TIPOS_VAC))-diccionario_parametros["DG_it"][i+1][t+1] for i in range(p.I_CENTROS_VAC))
+                              + quicksum(R_ijtm[i+1][j+1][t+1][m+1] * diccionario_parametros["CAC_j"][1][j+1] * (1- diccionario_parametros["PPC_m"][1][m+1]) for m in range(p.M_METODOS_TRANSPORTE) for j in range(p.J_TIPOS_VAC) for i in range(p.I_CENTROS_VAC)),
+    name = "R5")
+
+
+
+
+for e in range(p.E_EMPRESAS_CAM):
+    for t in range(p.T_DIAS):
+        if t > 8:
+            model.addConstr(quicksum(diccionario_parametros["E_et"][e+1][k+1] for k in range(t-7,t)) <=
+                            6 + (t+1) * diccionario_parametros["DES_et"][e+1][t+1],
+                            name="R10")
+
+for t in range(p.T_DIAS):
+    model.addConstr(quicksum(diccionario_parametros["CT_mt"][m+1][t+1] for m in range(p.M_METODOS_TRANSPORTE))<=
+                    diccionario_parametros["MES"],
+                    name="R11")
 
