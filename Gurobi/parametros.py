@@ -1,8 +1,8 @@
-I_CENTROS_VAC = 5
-J_TIPOS_VAC = 5
-E_EMPRESAS_CAM = 5
-M_METODOS_TRANSPORTE = 5
-T_DIAS = 7
+I_CENTROS_VAC = 1
+J_TIPOS_VAC = 1
+E_EMPRESAS_CAM = 1
+M_METODOS_TRANSPORTE = 1
+T_DIAS = 1
 
                                 #parte de 0
 def sumatoria(var, desde, hasta, posicion, base, par, dicc_par, pos_par, bas_par):
@@ -36,7 +36,3 @@ def sumatoria(var, desde, hasta, posicion, base, par, dicc_par, pos_par, bas_par
             print(lista)
             resultado += var[tuple(lista)]
     return resultado
-
-
-for i in range(10):
-    print(i)
