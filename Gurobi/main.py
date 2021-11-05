@@ -126,6 +126,7 @@ for j in range(p.J_TIPOS_VAC):
                         quicksum(R_ijtm[(i +1, j+1 , t +1, m+1)] for i in range(p.I_CENTROS_VAC) for m in range(p.M_METODOS_TRANSPORTE)) + I_tj[(t+1, j+1)]
                         , name="R4")
 
+
 for j in range(p.J_TIPOS_VAC):
     for t in range(1):
         model.addConstr(diccionario_parametros["V_jt"][j+1][t+1] + diccionario_parametros["a_j"][j+1][1] ==
@@ -135,16 +136,15 @@ for j in range(p.J_TIPOS_VAC):
 
 for t in range(1, p.T_DIAS):
     model.addConstr(
-        VP_t[t+1] == quicksum(quicksum(quicksum(R_ijtm[(i +1, j+1 , t +1, m+1)] * diccionario_parametros["CAC_j"][j+1][1] * diccionario_parametros["PPC_m"][m+1][1] for m in range(p.M_METODOS_TRANSPORTE))
+        VP_t[t+1] == quicksum(quicksum(quicksum(R_ijtm[(i +1, j+1 , t +1, m+1)] * diccionario_parametros["CAC_j"][j+1][1] for m in range(p.M_METODOS_TRANSPORTE))
                                        - diccionario_parametros[f"DE_{str(i+1)}jt"][j+1][t+1] for j in range(p.J_TIPOS_VAC)) - diccionario_parametros["DG_it"][i+1][t+1] for i in range(p.I_CENTROS_VAC))
-                               + quicksum(R_ijtm[(i +1, j+1 , t +1, m+1)] * diccionario_parametros["CAC_j"][j+1][1] * (0) for m in range(p.M_METODOS_TRANSPORTE) for j in range(p.J_TIPOS_VAC) for i in range(p.I_CENTROS_VAC)),
-    name = "R5")
+       , name = "R5")
 
 for t in range(1):
     model.addConstr(
         VP_t[t+1] == quicksum(quicksum(quicksum(R_ijtm[(i +1, j+1 , t +1, m+1)] * diccionario_parametros["CAC_j"][j+1][1] for m in range(p.M_METODOS_TRANSPORTE))
                                     - diccionario_parametros[f"DE_{str(i+1)}jt"][j+1][t+1] for j in range(p.J_TIPOS_VAC)) - diccionario_parametros["DG_it"][i+1][t+1] for i in range(p.I_CENTROS_VAC))
-                            + quicksum(R_ijtm[(i +1, j+1 , t +1, m+1)] * diccionario_parametros["CAC_j"][j+1][1] * (1 - diccionario_parametros["PPC_m"][m+1][1]) for m in range(p.M_METODOS_TRANSPORTE) for j in range(p.J_TIPOS_VAC) for i in range(p.I_CENTROS_VAC)), name = "Caso limite vacunas perdidas")
+        , name = "Caso limite vacunas perdidas")
 
 for t in range(p.T_DIAS):
     for m in range(p.M_METODOS_TRANSPORTE):
@@ -186,7 +186,16 @@ for t in range(p.T_DIAS):
     model.addConstr(VP_t[(t+1)] <= VPA_t[(t+1)], name="Correción VP")
     model.addConstr(VP_t[(t + 1)] >= VPA_t[(t + 1)] - 1, name="Correción VP")
 
-
+for t in range(p.T_DIAS):
+    model.addConstr((quicksum(I_tj[(t+1,j+1)] * diccionario_parametros["CI_j"][j+1][1] for j in range(p.J_TIPOS_VAC)))
+    + (quicksum(E_et[(e+1, t+1)] * diccionario_parametros["CE_e"][e+1][1] - DES_et[(e+1, t+1)] * diccionario_parametros["CED_e"][e+1][1] for e in range(p.E_EMPRESAS_CAM)))
+    + quicksum(
+        diccionario_parametros["CMP_m"][m+1][1] * CT_mt[(m+1,t+1)] + CN_mt[(m+1,t+1)] * diccionario_parametros["CCN_mt"][m+1][t+1] +
+        quicksum(CA_met[(m+1, e+1, t+1)] * diccionario_parametros["CDA_me"][m+1][e+1] for e in range(p.E_EMPRESAS_CAM))
+        + (quicksum(CC_imt[(i+1, m+1, t+1)] for i in range(p.I_CENTROS_VAC)) - quicksum(CA_met[(m+1,e+1, t+1)] for e in range(p.E_EMPRESAS_CAM))) * diccionario_parametros["CUP_m"][m+1][1]
+        for m in range(p.M_METODOS_TRANSPORTE))
+    + quicksum(R_ijtm[(i+1, j+1, t+1, m+1)] * diccionario_parametros[f"CTR_{str(i+1)}jm"][j+1][m+1] for i in range(p.I_CENTROS_VAC) for j in range(p.J_TIPOS_VAC) for m in range(p.M_METODOS_TRANSPORTE)) +
+    VPA_t[(t+1)] * diccionario_parametros["CPV"][1][1] <= diccionario_parametros["PRD"][1][1], name="Restricción presupuesto")
 
 
 ## Función objetivo
@@ -207,8 +216,6 @@ model.update()
 ## Finalmente
 
 model.setObjective(objetivo, GRB.MINIMIZE)
-
-model= model.relax()
 
 model.update()
 
