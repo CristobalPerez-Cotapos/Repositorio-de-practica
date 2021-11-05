@@ -208,6 +208,8 @@ model.update()
 
 model.setObjective(objetivo, GRB.MINIMIZE)
 
+model= model.relax()
+
 model.update()
 
 model.optimize()
