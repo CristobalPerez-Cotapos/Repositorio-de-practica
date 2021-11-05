@@ -170,12 +170,14 @@ for m in range(p.M_METODOS_TRANSPORTE):
             model.addConstr(CA_met[(m+1, e+1, t+1)] <= diccionario_parametros[f"CAM_m{str(e+1)}t"][m+1][t+1]*E_et[(e+1, t+1)], name="R9")
 
 
-for e in range(p.E_EMPRESAS_CAM):
-    for t in range(p.T_DIAS):
-        if t > 8:
-            model.addConstr(quicksum(E_et[(e+1, k+1)] for k in range(t-7, t)) <=
-                            6 + (t+1) * DES_et[(e+1, t+1)],
+for e in range(1,p.E_EMPRESAS_CAM+1):
+    for t in range(1,p.T_DIAS+1):
+        if t > 2:
+            model.addConstr( 0 >=  (-1/3)*(quicksum(E_et[(e, k)] for k in range(t-2, t))+1) +
+                            DES_et[(e, t)],
                             name="R10")
+        else:
+            model.addConstr(0==DES_et[(e, t)], name="caso limite")
 
 for t in range(p.T_DIAS):
     model.addConstr(quicksum(CT_mt[(m+1, t+1)] for m in range(p.M_METODOS_TRANSPORTE)) <=
