@@ -153,8 +153,8 @@ for t in range(p.T_DIAS):
 
 
 for m in range(p.M_METODOS_TRANSPORTE):
-    for t in range(1,p.T_DIAS):
-        model.addConstr(CT_mt[(m+1, t+1)]==diccionario_parametros["CIN_m"][m+1][1] + quicksum(CN_mt[(m+1,k+1)] for k in range(t)), name = "R7")
+    for t in range(1, p.T_DIAS):
+        model.addConstr(CT_mt[(m+1, t+1)] == diccionario_parametros["CIN_m"][m+1][1] + quicksum(CN_mt[(m+1, k+1)] for k in range(t)), name = "R7")
 
 for m in range(p.M_METODOS_TRANSPORTE):
     for t in range(1):
@@ -173,11 +173,11 @@ for m in range(p.M_METODOS_TRANSPORTE):
 for e in range(1,p.E_EMPRESAS_CAM+1):
     for t in range(1,p.T_DIAS+1):
         if t > 2:
-            model.addConstr( 0 >=  (-1/3)*(quicksum(E_et[(e, k)] for k in range(t-2, t))+1) +
+            model.addConstr(0 >= (-1/3)*(quicksum(E_et[(e, k)] for k in range(t-2, t))+1) +
                             DES_et[(e, t)],
                             name="R10")
         else:
-            model.addConstr(0==DES_et[(e, t)], name="caso limite")
+            model.addConstr(0 == DES_et[(e, t)], name="caso limite")
 
 for t in range(p.T_DIAS):
     model.addConstr(quicksum(CT_mt[(m+1, t+1)] for m in range(p.M_METODOS_TRANSPORTE)) <=
